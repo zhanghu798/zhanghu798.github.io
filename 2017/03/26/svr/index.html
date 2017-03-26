@@ -1,0 +1,1142 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SVR," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/blogImg/zhanghu798.jpg?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="SVR，Support Vector Regression，支持向量回归
+1. SVR问题引出
+
+
+（图1， 左图：支持向量回归示意图及epsilon回归带示意图；右图：epsilon不敏感损失)
+
+有样本集 \(D=\{(\boldsymbol{x_1}，y_1)，(\boldsymbol{x_2}，y_2)，\ldots，(\boldsymbol{x_m}，y_m)\}\)。其中， \(\bo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SVR">
+<meta property="og:url" content="http://yoursite.com/2017/03/26/svr/index.html">
+<meta property="og:site_name" content="张虎的博客">
+<meta property="og:description" content="SVR，Support Vector Regression，支持向量回归
+1. SVR问题引出
+
+
+（图1， 左图：支持向量回归示意图及epsilon回归带示意图；右图：epsilon不敏感损失)
+
+有样本集 \(D=\{(\boldsymbol{x_1}，y_1)，(\boldsymbol{x_2}，y_2)，\ldots，(\boldsymbol{x_m}，y_m)\}\)。其中， \(\bo">
+<meta property="og:image" content="http://yoursite.com/pic/ml/down/SVR.jpeg">
+<meta property="og:updated_time" content="2017-03-26T14:07:35.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SVR">
+<meta name="twitter:description" content="SVR，Support Vector Regression，支持向量回归
+1. SVR问题引出
+
+
+（图1， 左图：支持向量回归示意图及epsilon回归带示意图；右图：epsilon不敏感损失)
+
+有样本集 \(D=\{(\boldsymbol{x_1}，y_1)，(\boldsymbol{x_2}，y_2)，\ldots，(\boldsymbol{x_m}，y_m)\}\)。其中， \(\bo">
+<meta name="twitter:image" content="http://yoursite.com/pic/ml/down/SVR.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/26/svr/"/>
+
+
+
+
+
+  <title> SVR | 张虎的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?857a9d776bb324f3f63614da1e8c26d0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">张虎的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/26/svr/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="张虎">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/assets/blogImg/zhanghu798.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="张虎的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="张虎的博客" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                SVR
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-26T11:26:22+08:00">
+                2017-03-26
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">更新于</span>
+              <span class="post-updated">
+              <time title="更新于" itemprop="dateCreated dateUpdated" datetime="2017-03-26T11:26:22+08:00">
+                2017-03-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/03/26/svr/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/26/svr/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/03/26/svr/" class="leancloud_visitors" data-flag-title="SVR">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote class="blockquote-center"><font size="4">SVR，Support Vector Regression，支持向量回归</font></blockquote>
+<h1 id="svr问题引出">1. SVR问题引出</h1>
+<img src="/pic/ml/down/SVR.jpeg" border="0" width="60%" height="60%" style="margin: 0 auto">
+<center>
+（<a href="http://www.wendangku.net/doc/edabb87569dc5022abea0013.html" target="_blank" rel="external">图1</a>， 左图：支持向量回归示意图及epsilon回归带示意图；右图：epsilon不敏感损失)
+</center>
+<p>有样本集 <span class="math inline">\(D=\{(\boldsymbol{x_1}，y_1)，(\boldsymbol{x_2}，y_2)，\ldots，(\boldsymbol{x_m}，y_m)\}\)</span>。其中， <span class="math inline">\(\boldsymbol{x_i}\)</span>是一个样本，列向量；<span class="math inline">\(y_i\)</span>为回归直线，<span class="math inline">\(y_i \in \mathbb{R}\)</span>。 找到一个回归模型<span class="math inline">\(f(x) = \boldsymbol{w}^T\boldsymbol{x} + b\)</span>，使得<span class="math inline">\(f(\boldsymbol{x})\)</span>与<span class="math inline">\(y\)</span>在损失为<span class="math inline">\(\epsilon\)</span>不敏感损失下尽可能接近，其中回归线由落在<span class="math inline">\(\boldsymbol{w} \cdot \varphi(\boldsymbol{x}) + b - \epsilon = 0\)</span>与<span class="math inline">\(\boldsymbol{w} \cdot \varphi(\boldsymbol{x}) + b + \epsilon = 0\)</span>区域内的点参与构建.</p>
+<a id="more"></a>
+<h1 id="数学表达">2. 数学表达</h1>
+<p>假设样本结果为y, 预测结果为<span class="math inline">\(\widehat{y}\)</span>，定义<span class="math inline">\(\epsilon\)</span>不敏感损失为： <span class="math display">\[
+L_\epsilon(y, \widehat{y}) = 
+\left\{
+\begin{aligned}
+&amp; 0 &amp; if \ \  &amp; \lvert y -  \widehat{y} \rvert &lt; \epsilon \\
+&amp; \lvert y -  \widehat{y} \rvert - \epsilon &amp;  &amp; otherwise
+\end{aligned}
+\right. \tag{1}
+\]</span><br>
+上式 <span class="math inline">\(\epsilon &gt; 0\)</span>，epsilon的意义：在离回归线上下<span class="math inline">\(\epsilon\)</span>都不计入损失，其回归线可以看成回归线上下<span class="math inline">\(\epsilon\)</span>区域边界组成的回归带，落在在回归带上的点x损失为0，预测<span class="math inline">\(\widehat{y}\)</span>为固定x后回归带的中点</p>
+<p>误差为epsilon不敏感，使用L2正则的模型为： <span class="math display">\[J = C \sum_{i=1}^m  L_\epsilon(y, \widehat{y}) + \frac{1}{2}\lVert\boldsymbol{w}\rVert^2 \tag{2}\]</span></p>
+<h2 id="epsilon回归带能够覆盖所有点的情况">2.1. \(2\epsilon\)回归带能够覆盖所有点的情况</h2>
+<p>对于固定的<span class="math inline">\(\epsilon\)</span>，所有点均在回归带上的情况： <span class="math display">\[
+\left\{
+\begin{aligned}
+obj\ :\ \ &amp; \min_{\boldsymbol{w},b,\epsilon} \frac{1}{2}\lVert\boldsymbol{w}\rVert^2  \\
+st\ :\ \ &amp; \lvert  f(\boldsymbol{x_i})- y_i \rvert  \leqslant \epsilon
+\end{aligned}
+\right. \tag{3}
+\]</span></p>
+<h2 id="epsilon回归带不能够覆盖所有点的情况">2.2. \(2\epsilon\)回归带不能够覆盖所有点的情况</h2>
+<p>参照SVM的线性不可分的情况，为每个样本引入松弛因子<span class="math inline">\(\xi_i\)</span>使得不在回归带的点满足约束，并且在目标函数中加入对松弛因子的惩罚项<span class="math inline">\(C\)</span>，则有</p>
+<p><span class="math display">\[
+\left\{
+\begin{aligned}
+obj\ :\ \ &amp; \min_{\boldsymbol{w},b,\epsilon} \frac{1}{2}\lVert\boldsymbol{w}\rVert^2 ＋ C \xi_i  \\
+st\ :\ \ &amp; \lvert  f(\boldsymbol{x_i})  - y_i \rvert \leqslant \epsilon + \xi_i \\
+&amp; \xi_i \geqslant 0
+\end{aligned}
+\right. \tag{4}
+\]</span></p>
+<h1 id="问题求解">3. 问题求解</h1>
+<h2 id="将转化为凸优化问题">3.1. 将转化为凸优化问题</h2>
+<p>考虑上式约束不连续可导，分情况去掉绝对值： <span class="math display">\[
+\begin{eqnarray}  
+隔离带上方的样本：&amp; f(x_i) &amp;            &amp;            &amp; &lt;          &amp; y_i     &lt;        f(x_i) + \epsilon + \xi^+_i  \\
+隔离带下方的样本：&amp; f(x_i) &amp; - \epsilon &amp;  - \xi^-_i &amp;  &lt;         &amp; y_i     &lt;        f(x_i)  \\
+隔离带上的样本：  &amp; f(x_i) &amp; - \epsilon &amp;            &amp;  \leqslant &amp; y_i  \leqslant   f(x_i) + \epsilon 
+\end{eqnarray}  \tag{5}
+\]</span></p>
+<p>综上约束条件可以化为：<br>
+<span class="math display">\[
+f(x_i) - \epsilon   - \xi^-_i \leqslant y_i  \leqslant f(x_i) + \epsilon + \xi^+_i
+\]</span> <span class="math inline">\(\xi^-_i \geqslant 0， \xi^+_i \geqslant 0\)</span>。如果要求上下界是紧的，松弛因子至多有一个不为0，即<span class="math inline">\(\xi^-_i \xi^+_i=0\)</span></p>
+<p>式(4)中将<span class="math inline">\(f(x) = \boldsymbol{w} \cdot \boldsymbol{x} + b\)</span>，替换等价约束可以转化为： <span class="math display">\[
+\left.
+\begin{aligned}
+obj\ :\ \ &amp; \min_{\boldsymbol{w},b,\boldsymbol{\xi}} \frac{1}{2}\lVert\boldsymbol{w}\rVert^2 ＋ C\sum_{i=1}^m(\xi^+_i ＋ \xi^-_i ) \\
+st\ :\ \ &amp;  \boldsymbol{w} \cdot \boldsymbol{x_i} + b - \epsilon - \xi^-_i - y_i \leqslant 0\\
+&amp;  y_i - \boldsymbol{w} \cdot \boldsymbol{x_i} - b - \epsilon  - \xi^+_i   \leqslant 0   \\
+&amp; -\xi^+_i \leqslant 0 \\
+&amp; -\xi^-_i \leqslant 0 \\
+&amp; C，\epsilon 为超参数，C &gt;0，\epsilon \geqslant 0 
+\end{aligned}
+\right. \tag{6}
+\]</span><br>
+对于一个样本点<span class="math inline">\(x_i\)</span>其松弛因子<span class="math inline">\(\xi^+_i\)</span>和<span class="math inline">\(\xi^-_i\)</span>至多只有一个大于0</p>
+<p>式(6)为不带等式约束的<a href="http://0.0.0.0:4000/2017/03/18/convex-optimization/" target="_blank" rel="external">凸优化</a></p>
+<h2 id="拉格朗日函数">3.2. 拉格朗日函数</h2>
+<p>引入拉格朗日乘子<span class="math inline">\(\alpha_i^＋ \geqslant 0\)</span>， <span class="math inline">\(\alpha_i^－ \geqslant 0\)</span>，<span class="math inline">\(\mu^+_i \geqslant 0\)</span>和<span class="math inline">\(\mu^-_i \geqslant 0\)</span>，则拉格朗日函数为： <span class="math display">\[
+\begin{aligned}
+L(\boldsymbol{w},b,\boldsymbol{\xi^+},\boldsymbol{\xi^-},\boldsymbol{\alpha^+}, \boldsymbol{\alpha^-},\boldsymbol{\mu^+},\boldsymbol{\mu^-})= 
+&amp; \frac{1}{2}\lVert\boldsymbol{w}\rVert^2 ＋ C\sum_{i=1}^m(\xi^+_i ＋ \xi^-_i ) \\ 
+&amp; + \sum_{i=1}^m \alpha_i^-(\boldsymbol{w} \cdot \boldsymbol{x_i} + b - \epsilon - \xi^-_i - y_i)\\
+&amp; + \sum_{i=1}^m \alpha_i^+(y_i - \boldsymbol{w} \cdot \boldsymbol{x_i} - b - \epsilon  - \xi^+_i ) \\
+&amp; - \sum_{i=1}^m \mu_i^+ \xi_i^+ \\
+&amp; - \sum_{i=1}^m \mu_i^- \xi_i^-  
+\end{aligned} \tag{7}
+\]</span></p>
+<h2 id="拉格朗日对偶函数">3.3. 拉格朗日对偶函数</h2>
+<h3 id="拉格朗日函数极小问题">3.3.1. 拉格朗日函数极小问题</h3>
+<p>则，<span class="math inline">\(L(\boldsymbol{w},b,\boldsymbol{\xi^+},\boldsymbol{\xi^-})\)</span>取最极小值时满足（KKT条件之一），以下公式均为取得最优值满足的条件，例：<span class="math inline">\(\boldsymbol{w}\)</span> 实际表示 <span class="math inline">\(\boldsymbol{w^*}\)</span>，可参考<a href="http://reset.pub/2017/03/20/svm" target="_blank" rel="external">SVM</a>： <span class="math display">\[
+\left\{
+\begin{eqnarray}
+&amp; \nabla_{\boldsymbol{w}}L = 0 &amp; \Longrightarrow &amp; \boldsymbol{w} + \sum_{i=1}^m a_i^- \boldsymbol{x_i} - \sum_{i=1}^m \alpha_i^+ \boldsymbol{x_i} = 0 \ \ \  &amp; (1) \\
+&amp; \nabla_{\boldsymbol{b}}L = 0 &amp; \Longrightarrow &amp; \sum_{i=1}^m \alpha_i^+   - \sum_{i=1}^m a_i^- ＝ 0 &amp; (2)\\
+&amp; \nabla_{\boldsymbol{\xi_i^+}}L = 0 &amp; \Longrightarrow  &amp; C - \alpha_i^+ - \mu_i^+ = 0 &amp; (3) \\
+&amp; \nabla_{\boldsymbol{\xi_i^-}}L = 0 &amp; \Longrightarrow &amp; C - \alpha_i^- - \mu_i^- = 0 &amp; (4)\\
+\end{eqnarray} \tag{8}
+\right.
+\]</span></p>
+<p>整理上式得： <span class="math display">\[
+\begin{aligned}
+L = &amp; \frac{1}{2}\lVert\boldsymbol{w}\rVert^2   +\boldsymbol{w} \sum_{i=1}^m(a_i^- \boldsymbol{x_i} + a_i^+ \boldsymbol{x_i})  \\
+&amp; + (C - a_i^+ - u_i^+)\sum_{i=1}^m \xi_i^+ \\
+&amp; + (C - a_i^- - u_i^-)\sum_{i=1}^m \xi_i^- \\
+&amp; + b\sum_{i=1}^m(a_i^-  - a_i^+)  \\
+&amp; - \epsilon\sum_{i=1}^m (a_i^- + a_i^+) \\
+&amp; - \sum_{i=1}^m y_i(a_i^- - a_i^+) \\
+\end{aligned} \tag{9}
+\]</span></p>
+<p>将式(8)带入拉格朗日函数得拉格朗日对偶函数为：</p>
+<p><span class="math display">\[
+\begin{aligned}
+\max_{\boldsymbol{a^+},\boldsymbol{a^-}}L = 
+&amp; -\frac{1}{2}\lVert\boldsymbol{w}\rVert^2 - \epsilon\sum_{i=1}^m (a_i^- + a_i^+) - y_i \sum_{i=1}^m(a_i^- - a_i^+)  \\
+= &amp; -\frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m(a_i^- - a_i^+)(a_j^- - a_j^+)\boldsymbol{x}_i \cdot \boldsymbol{x}_j \\
+&amp; - \epsilon\sum_{i=1}^m (a_i^- + a_i^+) - y_i \sum_{i=1}^m(a_i^- - a_i^+)
+\end{aligned} \tag{10}
+\]</span></p>
+<h3 id="拉格朗日极大极小问题">3.3.2. 拉格朗日极大极小问题</h3>
+<p>考虑除(8)以外的KKT条件： <span class="math display">\[
+\left\{\ \ \ 
+\begin{aligned}
+&amp; \alpha_i^-(\boldsymbol{w} \cdot \boldsymbol{x_i} + b - \epsilon - \xi^-_i - y_i) = 0 &amp; \ \  &amp;  (1) \\
+&amp; \alpha_i^+(y_i - \boldsymbol{w} \cdot \boldsymbol{x_i} - b - \epsilon  - \xi^+_i ) = 0 &amp; &amp; (2) \\
+&amp; \mu_i^+ \xi_i^+ = 0 &amp; &amp;(3)\\
+&amp; \mu_i^- \xi_i^- = 0 &amp; &amp;(4) \\
+&amp; \boldsymbol{w} \cdot \boldsymbol{x_i} + b - \epsilon - \xi^-_i - y_i \leqslant 0 &amp; &amp;(5) \\
+&amp; y_i - \boldsymbol{w} \cdot \boldsymbol{x_i} - b - \epsilon  - \xi^+_i   \leqslant 0 &amp; &amp; (6)  \\
+&amp; -\xi^+_i \leqslant 0 &amp; &amp; (7) \\
+&amp; -\xi^-_i \leqslant 0 &amp; &amp; (8) \\
+&amp; \alpha_i^+,\alpha_i^-,\mu^+_i ,\mu^-_i \geqslant 0  &amp; &amp; (9) \\
+\end{aligned} \tag{11}
+\right.
+\]</span></p>
+<h3 id="alpha_i与a_i-约束关系">3.3.3. \(\alpha_i^+\)与\(a_i^-\)约束关系</h3>
+<ul>
+<li><p><span class="math inline">\(\sum_{i=1}^m（\alpha_i^+ - \alpha_i^- ）＝ 0\)</span><br>
+式(8).2</p></li>
+<li><p><span class="math inline">\(0 \leqslant \alpha_i^+ ，\alpha_i^- \leqslant C\)</span><br>
+证明：<br>
+<span class="math display">\[
+\left.
+\begin{aligned}
+式(8).3：&amp; \ \  C - \alpha_i^+ - \mu_i^+ = 0 \\
+(11).9：&amp; \ \ \mu_i^+ \geqslant 0， \alpha_i^+  \geqslant 0 
+\end{aligned}
+\right\} \Longrightarrow 0 \leqslant \alpha_i^+  \leqslant C \\
+\\
+同理：0 \leqslant \alpha_i^-  \leqslant C
+\]</span></p></li>
+<li><p><span class="math inline">\(\alpha_i^+ \alpha_i^- = 0\)</span><br>
+证明： 假设<span class="math inline">\(\alpha_i^+ &gt; 0\)</span>，<span class="math inline">\(\alpha_i^- &gt; 0\)</span>，则根据式(11)中的1，2，5，6可得 <span class="math display">\[
+\begin{aligned}
+\boldsymbol{w} \cdot \boldsymbol{x_i} + b - \epsilon - \xi^-_i - y_i = 0 &amp; \ \ &amp;(1)\\
+y_i - \boldsymbol{w} \cdot \boldsymbol{x_i} - b - \epsilon  - \xi^+_i = 0 &amp; &amp;(2) 
+\end{aligned} \tag{13}
+\]</span> 以上两式相加可得：<span class="math inline">\(-2 \epsilon = \xi_i^+ + \xi_i^-\)</span>，与约束<span class="math inline">\(\epsilon &gt; 0，\xi_i^+ \leqslant 0， \xi_i^- \leqslant 0\)</span>相违背。 则证明<span class="math inline">\(\alpha_i^+\)</span>和<span class="math inline">\(\alpha_i^-\)</span>至少有一个等于0，即<span class="math inline">\(\alpha_i^+ \alpha_i^- = 0\)</span>得证</p></li>
+</ul>
+<h3 id="考虑约束项的拉格朗日对偶问题">3.3.4. 考虑约束项的拉格朗日对偶问题</h3>
+<p><span class="math display">\[
+\left\{
+\begin{aligned}
+obj  ： &amp; \left.
+    \begin{aligned}
+    \max_{\boldsymbol{a^+},\boldsymbol{a^-}} \ \ &amp;  -\frac{1}{2} \sum_{i=1}^m \sum_{j=1}^m(a_i^- - a_i^+)(a_j^- - a_j^+)\boldsymbol{x}_i \cdot \boldsymbol{x}_j \\
+     &amp; - \epsilon\sum_{i=1}^m (a_i^- + a_i^+) - y_i \sum_{i=1}^m(a_i^- - a_i^+) &amp;
+    \end{aligned}
+    \right. \\
+st ：&amp; \sum_{i=1}^m (\alpha_i^+   -  a_i^-) ＝ 0 \\
+&amp;  0 \leqslant \alpha_i^+， \alpha_i^- \leqslant C \\
+&amp; \alpha_i^+ \alpha_i^- = 0
+\end{aligned} 
+\right. \tag{14}
+\]</span></p>
+<h2 id="拉格朗日乘子松弛因子支持向量的关系">3.4. 拉格朗日乘子、松弛因子、支持向量的关系</h2>
+<ul>
+<li><span class="math inline">\(\xi_i^+ \xi_i^- = 0\)</span><br>
+一个样本的松弛因子最多只有一个不为0</li>
+</ul>
+<p>考虑以下KKT条件：<br>
+<span class="math display">\[
+\left\{
+\begin{aligned}
+式(8).3：&amp; C - \alpha_i^+ - \mu_i^+ = 0   \\
+式(11).3：&amp; \mu_i^+ \xi_i^+ = 0 \\   
+式(12).2：&amp; 0 \leqslant \alpha_i^+ \leqslant C \\
+\end{aligned}
+\right.
+\]</span><br>
+则可以得出以下结论：</p>
+<ul>
+<li>当<span class="math inline">\(\alpha_i^+ = C\)</span>时： <span class="math inline">\(\alpha_i^- = 0，\mu_i^+ = 0，\xi_i^+ &gt; 0\)</span>，样本点在epsilon回归带之外，且在回归带上方</li>
+<li>当0 &lt; <span class="math inline">\(\alpha_i^+ &lt; C\)</span>时： <span class="math inline">\(\alpha_i^- = 0，\mu_i^+ &gt; 0， \xi_i^+ = 0\)</span>，样本点在回归线及上epsilon回归带中间，为支持向量</li>
+<li>当<span class="math inline">\(\alpha_i^+ = 0\)</span>时： <span class="math inline">\(\mu_i^+ &gt; 0，\xi_i^+ = 0\)</span>，样本点在回归线及上epsilon回归带中间</li>
+</ul>
+<p>同理</p>
+<ul>
+<li>当<span class="math inline">\(\alpha_i^- = C\)</span>时： <span class="math inline">\(\alpha_i^+ = 0，\mu_i^- = 0，\xi_i^- &gt; 0\)</span>，样本点在epsilon回归带之外，且在回归带下方</li>
+<li>当0 &lt; <span class="math inline">\(\alpha_i^- &lt; C\)</span>时： <span class="math inline">\(\alpha_i^+ = 0，\mu_i^- &gt; 0， \xi_i^- = 0\)</span>，样本点在回归线及下epsilon回归带中间，为支持向量</li>
+<li>当<span class="math inline">\(\alpha_i^- = 0\)</span>时： <span class="math inline">\(\mu_i^- &gt; 0，\xi_i^- = 0\)</span>，样本点在回归线及下epsilon回归带中间</li>
+</ul>
+<p>考虑式(8).2 可以得到回归直线为： <span class="math display">\[f(x) = \sum_{i=1}^m(a_i^+ - a_i^-)\boldsymbol{x_i} \cdot \boldsymbol{x} + b^* \tag{15}\]</span></p>
+<p>满足<span class="math inline">\(a_i^+ - a_i^- \neq 0\)</span>对应的点<span class="math inline">\(\boldsymbol{x_i}\)</span>为支持向量</p>
+<h2 id="b的求解">3.5. \(b^*\)的求解</h2>
+<p>当 <span class="math inline">\(0 \leqslant a_j^+ \leqslant C\)</span>时，<span class="math inline">\(a_j^- = 0\)</span>，由式(13).1可得</p>
+<p><span class="math display">\[
+b^*=-\sum_{i=1}^m(a_i^+ - a_i^-)\boldsymbol{x_i} \cdot \boldsymbol{x_j}+ \epsilon + y_j
+\]</span></p>
+<p>当 <span class="math inline">\(0 \leqslant a_j^- \leqslant C\)</span>时，<span class="math inline">\(a_j^+ = 0\)</span>，由式(13).2可得</p>
+<p><span class="math display">\[
+b^*=-\sum_{i=1}^m(a_i^+ - a_i^-)\boldsymbol{x_i} \cdot \boldsymbol{x_j} - \epsilon + y_j
+\]</span></p>
+<p>考虑当<span class="math inline">\(0 \leqslant a_j^+ \leqslant C\)</span>时，<span class="math inline">\(a_j^- = 0\)</span>，由式(13).1，当<span class="math inline">\(0 \leqslant a_j^- \leqslant C\)</span>时，<span class="math inline">\(a_j^+ = 0\)</span>，由式(13).2可得 <span class="math display">\[
+b^* = \left\{
+\begin{aligned}
+&amp;-\sum_{i=1}^m(a_i^+ - a_i^-)\boldsymbol{x_i} \cdot \boldsymbol{x_j}+ \epsilon + y_j，0 \leqslant a_j^+ \leqslant C \\
+&amp;-\sum_{i=1}^m(a_i^+ - a_i^-)\boldsymbol{x_i} \cdot \boldsymbol{x_j} - \epsilon + y_j，0 \leqslant a_j^- \leqslant C
+\end{aligned}
+\right.
+\]</span></p>
+<h1 id="引入核函数.">4. 引入核函数.</h1>
+<p><span class="math inline">\(\kappa(\boldsymbol{x}, \boldsymbol{z}) = \varphi( \boldsymbol{x}) \cdot \varphi( \boldsymbol{z})\)</span>替换以上<span class="math inline">\(\boldsymbol{x} \cdot \boldsymbol{z}\)</span>形式 则： <span class="math display">\[f(x) = \sum_{i=1}^m(a_i^+ - a_i^-)\kappa(\boldsymbol{x_i},  \boldsymbol{x}) + b^*\]</span></p>
+<p><span class="math display">\[
+b^* = \left\{
+\begin{aligned}
+&amp;-\sum_{i=1}^m(a_i^+ - a_i^-) \kappa(\boldsymbol{x_i},  \boldsymbol{x_j}) + \epsilon + y_j，0 \leqslant a_j^+ \leqslant C \\
+&amp;-\sum_{i=1}^m(a_i^+ - a_i^-) \kappa(\boldsymbol{x_i},  \boldsymbol{x_j}) - \epsilon + y_j，0 \leqslant a_j^- \leqslant C
+\end{aligned}
+\right.
+\]</span></p>
+<h1 id="参考资料">5. 参考资料</h1>
+<p>[1]《机器学习》，周志华著，2016<br>
+[2]《Machine Learning - A Probabilistic Perspective》，Kevin P. Murphy ，2012<br>
+[3]《Pattern Recognition And Machine Learning》，Christopher Bishop，2007<br>
+[4] 支持向量回归：<a href="http://blog.jasonding.top/2015/05/01/Machine%20Learning/【机器学习基础】支持向量回归" target="_blank" rel="external">http://blog.jasonding.top/2015/05/01/Machine%20Learning/【机器学习基础】支持向量回归</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SVR/" rel="tag"># SVR</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/22/sublime/" rel="next" title="Sublime使用过程中的tips">
+                <i class="fa fa-chevron-left"></i> Sublime使用过程中的tips
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/26/gbdt/" rel="prev" title="GBDT">
+                GBDT <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/03/26/svr/"
+           data-title="SVR" data-url="http://yoursite.com/2017/03/26/svr/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/blogImg/zhanghu798.jpg"
+               alt="张虎" />
+          <p class="site-author-name" itemprop="name">张虎</p>
+          <p class="site-description motion-element" itemprop="description">记录、交流、进步</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.xinyao.pub/" title="李昕垚" target="_blank">李昕垚</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#svr问题引出"><span class="nav-text">1. SVR问题引出</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数学表达"><span class="nav-text">2. 数学表达</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#epsilon回归带能够覆盖所有点的情况"><span class="nav-text">2.1. \(2\epsilon\)回归带能够覆盖所有点的情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#epsilon回归带不能够覆盖所有点的情况"><span class="nav-text">2.2. \(2\epsilon\)回归带不能够覆盖所有点的情况</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题求解"><span class="nav-text">3. 问题求解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#将转化为凸优化问题"><span class="nav-text">3.1. 将转化为凸优化问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拉格朗日函数"><span class="nav-text">3.2. 拉格朗日函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拉格朗日对偶函数"><span class="nav-text">3.3. 拉格朗日对偶函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#拉格朗日函数极小问题"><span class="nav-text">3.3.1. 拉格朗日函数极小问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拉格朗日极大极小问题"><span class="nav-text">3.3.2. 拉格朗日极大极小问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#alpha_i与a_i-约束关系"><span class="nav-text">3.3.3. \(\alpha_i^+\)与\(a_i^-\)约束关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#考虑约束项的拉格朗日对偶问题"><span class="nav-text">3.3.4. 考虑约束项的拉格朗日对偶问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拉格朗日乘子松弛因子支持向量的关系"><span class="nav-text">3.4. 拉格朗日乘子、松弛因子、支持向量的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#b的求解"><span class="nav-text">3.5. \(b^*\)的求解</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引入核函数."><span class="nav-text">4. 引入核函数.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-text">5. 参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张虎</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"reset"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("rq0juDBslCtl5aXg0AoWw1q5-gzGzoHsz", "Y03tdkiQrnrHBQzsjfjdL29V");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,1190 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="凸优化," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/blogImg/zhanghu798.jpg?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Convex Optimization，凸优化
+SVM中的凸优化中的KKT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凸优化简介">
+<meta property="og:url" content="http://yoursite.com/2017/03/18/convex-optimization/index.html">
+<meta property="og:site_name" content="张虎的博客">
+<meta property="og:description" content="Convex Optimization，凸优化
+SVM中的凸优化中的KKT">
+<meta property="og:image" content="http://yoursite.com/pic/ml/down/LagrangeMultipliers2D.svg.png">
+<meta property="og:image" content="http://yoursite.com/pic/ml/down/600px-As_wiki_lgm_parab.svg.png">
+<meta property="og:updated_time" content="2017-03-26T03:18:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="凸优化简介">
+<meta name="twitter:description" content="Convex Optimization，凸优化
+SVM中的凸优化中的KKT">
+<meta name="twitter:image" content="http://yoursite.com/pic/ml/down/LagrangeMultipliers2D.svg.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/18/convex-optimization/"/>
+
+
+
+
+
+  <title> 凸优化简介 | 张虎的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?857a9d776bb324f3f63614da1e8c26d0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">张虎的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/18/convex-optimization/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="张虎">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/assets/blogImg/zhanghu798.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="张虎的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="张虎的博客" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                凸优化简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-18T15:56:00+08:00">
+                2017-03-18
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">更新于</span>
+              <span class="post-updated">
+              <time title="更新于" itemprop="dateCreated dateUpdated" datetime="2017-03-18T15:56:00+08:00">
+                2017-03-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/03/18/convex-optimization/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/18/convex-optimization/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/03/18/convex-optimization/" class="leancloud_visitors" data-flag-title="凸优化简介">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote class="blockquote-center"><font size="4">Convex Optimization，凸优化</font></blockquote>
+<p>SVM中的凸优化中的KKT <a id="more"></a></p>
+<h1 id="几个基本概念">1. 几个基本概念</h1>
+<h2 id="凸集">1.1. 凸集</h2>
+<p>如果集合<span class="math inline">\(C\)</span>中任意两点间的<strong>线段</strong>仍然在<span class="math inline">\(C\)</span>中，即满足: <span class="math display">\[\left.
+\begin{aligned}
+  \forall x_1, x_2 \in C &amp;  \\
+\forall\ \theta\ ,\ 0 \leqslant \theta \leqslant 1 &amp;
+\end{aligned}
+\right\} \Longrightarrow \theta x_1 + (1-\theta)x_2 \in C
+\]</span></p>
+<p>多点推广: <span class="math display">\[\left.
+\begin{aligned}
+  \forall x_1, x_2, \ldots, x_k \in C &amp;  \\
+  \theta_i \geqslant 0, \ i = 1, \ldots, k &amp; \\
+  \sum_{i=1}^k \theta_i = 1 &amp;
+\end{aligned}
+\right\} \Longrightarrow \theta_i x_i + \ldots + \theta_k x_k \in C
+\]</span></p>
+<p>多点推广的证明: 1, 三点成立证明 <span class="math display">\[\begin{aligned}
+ \left.
+\begin{aligned}
+    \left.
+        \begin{aligned}
+            \left.
+                \begin{aligned}
+                    \forall x_1, x_2 \in C &amp;  \\
+                    \forall\ \theta_1\ ,\ 0 \leqslant \theta_1 \leqslant 1 &amp;
+                \end{aligned}
+            \right\} \Longrightarrow \theta_1 x_1 + (1-\theta_1)x_2 \in C \\
+            \forall\ \theta_2\ ,\ 0 \leqslant \theta_2 \leqslant 1 \\\
+            \forall\ x_3 \in C \\
+        \end{aligned}
+    \right\} \Longrightarrow \theta_2 (\theta_1 x_1 + (1-\theta_1)x_2) + (1-\theta_2)x_3 \in C \\
+   \left.
+        \begin{aligned}
+            &amp;0 \leqslant \theta_1, \theta_2, \theta_3 \leqslant 1 \\
+            set:\ &amp;\theta_1&#39;=\theta_2 \theta_1 \\
+            &amp;\theta_2&#39;=\theta_2(1-\theta_1) \\
+            &amp;\theta_3&#39;=(1-\theta_2)
+        \end{aligned}
+    \right\} \Longrightarrow \left\{
+    \begin{aligned}
+        \theta_1&#39; + \theta_2&#39; + \theta_3&#39; = 1 \\
+        0 \leqslant \theta_1&#39;,\theta_2&#39;, \theta_3&#39; \leqslant 1 &amp;
+    \end{aligned}
+    \right.
+\end{aligned}
+\right\} &amp;\\
+\\
+\Longrightarrow \theta_1&#39; x_1 + \theta_2&#39; x_2 + \theta_3&#39; x_3 \in C  &amp;
+\end{aligned}
+\]</span></p>
+<p>整理上式得: <span class="math display">\[\left.
+\begin{aligned}
+  \forall \  x_1, x_2, x_3 \in C &amp;  \\
+  \forall \ \theta_i, 0 \leqslant \theta_i \leqslant 1 &amp; \ \ i \in [1, 3]\\
+  \theta_1&#39; + \theta_2&#39; + \theta_3&#39; = 1&amp;
+\end{aligned}
+\right\} \Longrightarrow \theta_1&#39; x_1 + \theta_2&#39; x_2  + \theta_3&#39; x_3  \in C
+\]</span></p>
+<p>2, k点成立正证明: 用同样的方法可以证明k-1个点到k个点的情况, 即通过归纳法证得多点也成立</p>
+<h2 id="仿射集">1.2. 仿射集</h2>
+<p>如果集合<span class="math inline">\(C\)</span>中任意两点决定的<strong>直线</strong>仍然在<span class="math inline">\(C\)</span>中, 即满足: <span class="math display">\[\left.
+\begin{aligned}
+  \forall x_1, x_2 \in C &amp;  \\
+\forall\ \theta\ &amp;
+\end{aligned}
+\right\} \Longrightarrow \theta x_i + (1-\theta)x_2 \in C
+\]</span> 类似凸集可推广到多点</p>
+<p>凸集是仿射集的真子集</p>
+<h2 id="凸函数">1.3. 凸函数</h2>
+<p>如果函数<span class="math inline">\(\ f\ \)</span>定义域是凸集，对于定义域内的任意<span class="math inline">\(\ x, y \in \boldsymbol{dom}\ f\ \)</span> 和任意<span class="math inline">\(\ 0 \leqslant \theta \leqslant 1\ \)</span>, 有 <span class="math inline">\(f\big(\theta x + (1-\theta)y\big) \leqslant \theta f(x) + (1-\theta)f(y)\)</span>, 即:</p>
+<p><span class="math display">\[\left.
+\begin{aligned}
+\ 函数f\ 的定义域\boldsymbol{dom}\ f\ 是凸集 &amp;  \\
+\ \forall x, y \in \boldsymbol{dom}\ f\  &amp;  \\
+\forall \theta\ ,\ 0 \leqslant \theta \leqslant 1 &amp;
+\end{aligned}
+\right\} \Longrightarrow f(\theta x + (1-\theta)y) \leqslant \theta f(x) + (1-\theta)f(y)
+\]</span></p>
+<ul>
+<li>即，定义域内，两点的期望的函数值小于分别求函数值的期望， 亦即<span class="math inline">\(\ f(E(x)) \leqslant E(f(x))\)</span></li>
+<li>当以上不等式存在’<span class="math inline">\(=\)</span>’成立时，是<strong>非严格凸</strong>， 否则为<strong>严格凸</strong></li>
+</ul>
+<h3 id="凸函数的判断">1.3.1. 凸函数的判断</h3>
+<h4 id="根据定义判断">1.3.1.1. 根据定义判断</h4>
+<p>直接利用定义证明</p>
+<h4 id="一阶条件判断">1.3.1.2. 一阶条件判断</h4>
+<p>假设函数<span class="math inline">\(\ f\ \)</span>可微， 则: <span class="math display">\[f是凸函数 \Longleftrightarrow
+\left\{
+\begin{aligned}
+&amp; \boldsymbol{dom} \ f\  是凸集 \\
+&amp; \forall \ x, y \in \boldsymbol{dom}\ f \\
+&amp; f(y) \geqslant f(x) + \nabla f(x)^\mathsf{T}(y-x)  \ \ \ \ \ (任意点的函数值大于等于任意切线在该点的值)
+\end{aligned}
+\right.
+\]</span></p>
+<h4 id="二阶条件判断">1.3.1.3. 二阶条件判断</h4>
+<p>如果函数<span class="math inline">\(\ f \ \)</span>二阶可微， 则<span class="math inline">\(\ f \ \)</span>为凸函数的<strong>充要条件</strong>是， 二阶导数<span class="math inline">\(Hessian\)</span>矩阵是正定阵</p>
+<h2 id="仿射函数">1.4. 仿射函数</h2>
+<p>如果具有 <span class="math inline">\(f(x)\ =\ \boldsymbol{A}\boldsymbol{x}+\boldsymbol{b}\)</span>的形式的函数<span class="math inline">\(\ f\ \)</span>称为仿射函数</p>
+<ul>
+<li>凸函数是仿射函数的真子集</li>
+</ul>
+<h1 id="优化与凸优化问题表示">2. 优化与凸优化问题表示</h1>
+<h2 id="优化问题的一般形式">2.1. 优化问题的一般形式</h2>
+<p><span class="math display">\[\begin{aligned}
+obj\ :&amp;\ \ \min\ f_0(x)  \\
+st\ :&amp;\ \ f_i(x) \leqslant 0, \ i = 1,2, \ldots, m \  \\
+&amp;\ \ h_i(x) = 0, i = 1, 2, \ldots, p
+\end{aligned}
+\]</span></p>
+<h2 id="凸优化问题的一般形式">2.2. 凸优化问题的一般形式</h2>
+<p><span class="math display">\[\begin{aligned}
+obj\ :&amp;\ \ \min\ f_0(x) &amp; \\
+st\ :&amp;\ \ f_i(x) \leqslant 0\ , \ i = 1,2, \ldots, m &amp;\\
+&amp;\ \ h_i(x) = 0, i = 1, 2, \ldots, p &amp; \\
+&amp;\ \ f_0(x)\ 是凸函数 \\
+&amp;\ \ f_i(x)\ 是凸函数，\  i \in [1, m] &amp; \\
+&amp;\ \ h_i(x)\ 是仿射函数， 即h_i(x)为\boldsymbol{A}\boldsymbol{x}+\boldsymbol{b} 的形式\ , i \in [1, p] &amp;
+\end{aligned}
+\]</span></p>
+<h1 id="拉格朗日乘子法">3. 拉格朗日乘子法</h1>
+<h2 id="广义拉格朗日函数">3.1. 广义拉格朗日函数:</h2>
+<p><span class="math display">\[\begin{aligned}
+&amp; L(x, \boldsymbol{\lambda}, \boldsymbol{\nu}) = f_0(x) + \sum_{i=1}^m\lambda_i f_i(x) + \sum_{i=1}^p \nu_i h_i(x) \\
+&amp; \boldsymbol{\nu} \in \boldsymbol{R}^p , \  \boldsymbol{\lambda} \in \boldsymbol{R}^m \\
+&amp; \lambda_i \geqslant 0, \ i \in [1, m]
+\end{aligned}\]</span></p>
+<h2 id="拉格朗日函数">3.2. 拉格朗日函数:</h2>
+<p><span class="math display">\[\theta_p(x) = \max_{\boldsymbol{\lambda}, \boldsymbol{\nu}}{L(x, \boldsymbol{\lambda}, \boldsymbol{\nu})}
+\left\{
+\begin{aligned}
+ f_0(x), &amp; \ \  x满足原始问题的约束  \\
+ +\infty, &amp; \ \ 其他\\
+\end{aligned}
+\right.
+\]</span></p>
+<h2 id="拉格朗日函数的理解">3.3. 拉格朗日函数的理解</h2>
+<img src="/pic/ml/down/LagrangeMultipliers2D.svg.png" width="50%" height="50%" style="margin: 0 auto">
+<center>
+(<a href="https://en.wikipedia.org/wiki/Lagrange_multiplier" target="_blank" rel="external">图1</a>, <span class="math inline">\(\ f_0(x)\)</span>等高线示与约束条件示意图,蓝色箭头方向为等高线对应值降低的方向,<br>当<span class="math inline">\(g(x, y) - c = 0\)</span>时红色线表示等式约束;<br>当<span class="math inline">\(g(x, y) - c \leqslant 0\)</span> 红色线箭头方向为不等式约束成立的方向)
+</center>
+<ul>
+<li>等高线: 考虑三维情况, <span class="math inline">\(z=f_0(x, y)\)</span>的情况，等高面<span class="math inline">\(z = d\)</span>与函数<span class="math inline">\(f_0(x, y)\)</span>相交的部分为等高线, 等高线在<span class="math inline">\((x, y)\)</span>平面的投影可表示为<span class="math inline">\(f_0(x, y)=d\)</span></li>
+</ul>
+<h3 id="一个等式的约束问题">3.3.1. 一个等式的约束问题</h3>
+<p>如图假设等式约束为 $ h_1(x, y)=g(x, y) - c=0 $， 拉格朗日函数表示为: <span class="math inline">\(L=f_0(x, y) + \nu h_1(x, y)\)</span>. 如果函数<span class="math inline">\(f_0(x, y)\)</span> 的值域连续, 则其等高线投影与$g(x, y) -c <span class="math inline">\(相切处取得等式约束条件下的极值，此时\)</span>f_0(x, y)$</p>
+<p><span class="math display">\[\left.
+\begin{aligned}
+    &amp; \left.
+    \begin{aligned}
+         f_0(x, y)与h_1(x, y)相切\Rightarrow  \nabla_{x, y} f_0(x,  y) = \nu&#39; (\nabla_{x, y} h_1(x, y)) \Rightarrow \nabla_{x, y}[f_0 + \nu(h_1)] =0 &amp; \\
+          h_1(x,y)=0 \Rightarrow \nabla_{\nu}[f_0 + \nu(h_1)]  = 0 &amp;
+    \end{aligned}
+    \right\} \\
+    \\
+    &amp; \Longrightarrow  \nabla_{x, y, \nu} \big[f_0(x) + \nu h_1(x) \big]  = 0
+    \\
+    &amp; \Longrightarrow 目标函数f(x,y)在一个等式约束条件下取得最值处的解与L=f_(x, y) + \nu h_1(x,y)极值的解等价
+\end{aligned}
+\right.
+\]</span><br>
+- <em>注</em>: <span class="math inline">\(\nu&#39;\)</span> 可以看作是两个等价切线(超平面)的系数, 同分割超平面的等价超平面的系数<span class="math inline">\(k\)</span> <span class="math inline">\(\nu = -\nu&#39;\)</span></p>
+<h3 id="多个等式约束问题">3.3.2. 多个等式约束问题</h3>
+<img src="/pic/ml/down/600px-As_wiki_lgm_parab.svg.png" width="45%" height="45%" style="margin: 0 auto">
+<center>
+(<a href="https://en.wikipedia.org/wiki/Lagrange_multiplier" target="_blank" rel="external">图2</a>,等高线及含有两个约束条件的情况示意图)
+</center>
+<p>多个等式约束看作在满足约束条件下集合处， 定义极值处的梯度方向为多个约束加权后得到的梯度和目标函数<span class="math inline">\(f_0(极点)\)</span>处的梯度平行 即极值处满足: <span class="math display">\[\left.
+\begin{aligned}
+    &amp; \nabla_{\boldsymbol{x}} f(x) = \sum_{i=1}^p \lambda_i&#39; \nabla_{\boldsymbol{\boldsymbol{x}}}  f_i(\boldsymbol{x})  \\
+    &amp; f_i(x) = 0, \ \ i = 1,\ldots,  m
+\end{aligned}
+\right\} \Longrightarrow \nabla_{\boldsymbol{x}, \boldsymbol{\lambda}} \big[f_0(x) + \sum_{i=1}^p \lambda_i f_i(x)\big] = 0, \ \ \ \ 当\lambda_i \neq 0时, \ \ i = 1,\ldots,  m
+\]</span></p>
+<h3 id="一个不等式等式约束">3.3.3. 一个不等式等式约束</h3>
+<p>假设目标函数<span class="math inline">\(\min f_0(x)\)</span>， 有不等式约束<span class="math inline">\(f_1(x) &lt; 0\)</span> 如图1表示， 当不等式约束有效时，须使得目标函数的函数值减小的方向与不等式约束成立的方向相反<strong>且</strong>目标函数与不等式约束的边界相切时取得极值. 即如果约束有效的情况下， 目标函数取得极值时一定在约束的边界处， 问题可以简化为等式约束的情况</p>
+<p>边界有效时: 目标函数的函数值减小的方向与不等式约束成立的方向相反 则: <span class="math display">\[\left.
+\begin{aligned}
+    f_0(x)降低方向的梯度为: -\nabla f_0(x)  &amp; \\
+    f_1(x) &lt; 0所表示定义域方向梯度方向为: -\nabla f_1(x) &amp; \\
+    f_0(x)与f_1(x)相切，且降低方向的梯度和定义域方向梯度相反 &amp;
+\end{aligned}
+\right\} \Longrightarrow
+\left\{
+\begin{aligned}
+    &amp; \nabla f_0(x) = -\lambda \nabla f_1(x) \\
+    &amp; \lambda &gt; 0
+\end{aligned}
+\right.
+\]</span></p>
+<p>考虑不等式约束无效的情况， 目标函数降低方向的梯度和定义域方向梯度相同， 即假设不等式约束成立的方向为图1中红色箭头相反的方向， 此时仍然可以有目标函数与不等式约束边界相切， 但是所求<span class="math inline">\(\lambda &lt; 0\)</span>， 且此时切点对应的函数值显然不是极值处</p>
+<p>另外，只考虑不等式约束时， 不等式自身约束恒成立力时(或着当有多个约束时， 其他约束的定义域为该约束的子集. 即该约束对所有约束的交集无贡献)， 该约束项的乘子可为0.</p>
+<p>综上: 考虑约束的有效性综， 不等式约束的朗格朗日乘<span class="math inline">\(\lambda \leqslant 0\)</span>， 等号拉格朗日乘子等于0时，代表约束对取得最值时无贡献</p>
+<h3 id="多个不等式约束">3.3.4. 多个不等式约束</h3>
+<p>多个不等式约束同多个不等式约束的情况. 其中每个不等式约束的朗格朗日乘子均大于等于0</p>
+<h3 id="多个等式约束和多个不等式约束的情况">3.3.5. 多个等式约束和多个不等式约束的情况</h3>
+<p>同多个等式约束情况， 取得极值处可看作是在可行域内有效约束内<strong>且</strong>由权值为拉格朗日乘子加权作为梯度平行于原函数的梯度</p>
+<h2 id="原问题的拉格朗日函数">3.4. 原问题的拉格朗日函数</h2>
+<p><span class="math display">\[L_P= \min_{\boldsymbol{x}}\max_{\boldsymbol{\lambda}, \boldsymbol{\nu}} {L(\boldsymbol{x}, \boldsymbol{\lambda}, \boldsymbol{\nu})}\]</span></p>
+<h2 id="原问题的拉格朗日对偶函数">3.5. 原问题的拉格朗日对偶函数</h2>
+<p>对偶函数 <span class="math display">\[
+令, g(\boldsymbol{\lambda}, \boldsymbol{\nu})
+= \inf_{x \in D} L(\boldsymbol{\lambda}, \boldsymbol{\nu})
+= \inf_{x \in D}(f_0(x) + \sum_{i=1}^m\lambda_i f_i(x) + \sum_{i=1}^p \nu_i  h_i(x))
+\]</span></p>
+<p><span class="math display">\[L_D = \max_{\boldsymbol{\lambda}, \boldsymbol{\nu}}\min_{x} {L(x, \lambda, \nu)} = \max_{\boldsymbol{\lambda}, \boldsymbol{\nu}}g(\boldsymbol{\lambda}, \boldsymbol{\nu}) \]</span></p>
+<p><span class="math inline">\(g(\boldsymbol{\lambda}, \boldsymbol{\nu})\)</span>被求极小的部分： 可以看成给定一个<span class="math inline">\(\boldsymbol{x}\)</span>, 有<span class="math inline">\(常数 + 常数向量1 \cdot \boldsymbol{\lambda} + 常数向量2 \cdot \boldsymbol{\nu}\)</span>， 即为关于<span class="math inline">\({\lambda}, \boldsymbol{\nu})\)</span>仿射的； 考虑极小问题，是由无数个, 确定的<span class="math inline">\(\boldsymbol{x}\)</span>对应的仿射函数逐点求下界，由仿射函数的下界求交集是凹的. 所以<span class="math inline">\(g(\boldsymbol{\lambda}, \boldsymbol{\nu})\)</span> 是凹的</p>
+<h2 id="原问题拉格朗日函数与对偶函数的关系">3.6. 原问题拉格朗日函数与对偶函数的关系</h2>
+<p>假设原问题和其对偶问题均有最优值</p>
+<p><span class="math display">\[\begin{aligned}
+&amp; \min_{x} {L(x, \lambda, \nu)} \leqslant L(x, \lambda, \nu) \leqslant \max_{\lambda, \nu} {L(x, \lambda, \nu)} \\
+\Longrightarrow \ &amp; \max_{\lambda, \nu}\min_{x} {L(x, \lambda, \nu)} \leqslant L(x, \lambda, \nu) \leqslant \min_{x}\max_{\lambda, \nu} {L(x, \lambda, \nu)} \\
+\Longrightarrow \ &amp; L_D \leqslant L_P
+\end{aligned}
+\]</span></p>
+<p>当上式子取得等号时， 称为强对偶.</p>
+<h2 id="slater-准则">3.7. Slater 准则</h2>
+<p>用于凸优化问题中，强对偶条件成立是否存在</p>
+<p><span class="math display">\[\left.
+\begin{aligned}
+    原问题为凸优化问题 &amp; \\
+    存在 x \in 约束条件的交集， 使得 f_i(x) &lt; 0, i = 1,\ldots,  m &amp; \\
+\end{aligned}
+\right\} \Longrightarrow 该问题的强对偶性可以达到
+\]</span></p>
+<p>对于在不等式约束函数为仿射函数的情况，只需要找到的<span class="math inline">\(x\)</span>，满足原不等式即可（满足“<span class="math inline">\(\leqslant\)</span>”， 而不需要更强的条件“<span class="math inline">\(&lt;\)</span>”） 整理得： <span class="math display">\[\left.
+\begin{aligned}
+    原问题为凸优化问题 &amp; \\
+    存在 x \in 约束条件的交集且f_i(x)不是仿射的满足f_i(x) &lt; 0, \ i = 1,\ldots, k &amp; \\
+\end{aligned}
+\right\} \Longrightarrow 该问题的强对偶性可以达到
+\]</span></p>
+<p>证明见:《凸优化》－ 清华出版社 Stephen Boyd 等著， 王书宁等译，<span class="math inline">\(P_{226} - P_{228}\)</span></p>
+<h2 id="kkt条件">3.8. KKT条件</h2>
+<p>强对偶成立时，最优解需要满足的条件</p>
+<p>令<span class="math inline">\(x^*\)</span>是原问题的最优解，<span class="math inline">\((\lambda^*， \nu^*)\)</span>对偶问题的最优解 则， <span class="math display">\[
+\begin{eqnarray}
+原始约束问题的最值=拉格朗日对偶问题的最值 \Rightarrow
+    &amp; \ f_0(x^*) &amp; = &amp; g(\lambda^*, \nu^*)  \\
+对偶问题的定义\Rightarrow
+    &amp;  &amp; = &amp; \inf_{x}\big(f_0(x) + \sum_{i=1}^m \lambda_i^* f_i(x) + \sum_{i=1}^p \nu^*h_i(x)\big) \\
+任意x的逐点求下解值小于其中一个x的值\Rightarrow
+    &amp; &amp; \leqslant &amp; f_0(x^*) + \sum_{i=1}^m \lambda_i^* f_i(x^*) + \sum_{i=1}^p \nu^*h_i(x^*) \\
+不等式约束项小于等于0，等式约束项等于0 \Rightarrow
+    &amp; &amp; \leqslant &amp; f_0(x^*) \\
+\end{eqnarray}
+\]</span></p>
+<p>由<span class="math inline">\(A \leqslant B \leqslant A\)</span>形式得， <span class="math inline">\(B = A\)</span> 即有：</p>
+<p><span class="math display">\[
+\left.
+\begin{aligned}
+\left.
+\begin{aligned}
+\left.
+\begin{aligned}
+f_0(x^*) + \sum_{i=1}^m \lambda_i^* f_i(x^*) + \sum_{i=1}^p \nu_i^*h_i(x^*) = f_0(x^*) \\
+优化问题不等式约束，f_i(x) \leqslant 0 \\
+优化问题的等式约束， h_i(x) = 0 \\
+\lambda_i \geqslant 0
+\end{aligned}
+\right\} \Longrightarrow \lambda_i^*f_i(x^*) = 0，  i = 1,2, \ldots, m \ \ \ \ &amp; \\
+f_i(x) \leqslant 0，   i = 1,2, \ldots, p \ \ \ \ &amp;  \\
+h_i(x) = 0， i = 1,2, \ldots, p \ \ \ \ &amp;  \\
+\lambda_i \geqslant 0，  i = 1,2, \ldots, m \ \ \ \ &amp;  \\
+拉格朗日函数在x^*处取得极小值： \nabla_{\boldsymbol{x}} \big[f_0(x) + \sum_{i=1}^m \lambda_i^* f_i(x) + \sum_{i=1}^m \nu_i^*h_i(x) \big]_{x=x^*} = 0  \ \ \ \ &amp;
+\end{aligned}
+\right\} KKT条件
+\end{aligned}
+\right.
+\]</span></p>
+<p>其中 <span class="math inline">\(\lambda_i^*f_i(x^*)\)</span>为松弛条件 有： <span class="math display">\[\left\{
+\begin{aligned}
+    &amp; 当 f_i(x) &lt; 0时， \lambda_i = 0. \ 该约束条件为非边界条件，不影响极值 \\
+    &amp; 当 f_i(x) = 0时， \lambda_i &gt; 0. \ 该约束条件为边界条件，在SVM中该点为支撑向量
+\end{aligned}
+\right.
+\]</span></p>
+<p>对于非凸问题， 拉格朗日函数的极值未必是原问题的最值， 所以未必是最优解。 对于凸的问题， 满足KKT条件即为原始约束问题的最优解， KKT条件是最优性充要条件</p>
+<h1 id="section">4. …</h1>
+<p>待续…</p>
+<h1 id="参考资料">5. 参考资料</h1>
+<p>[1] 《凸优化》，清华出版社 Stephen Boyd，Lieven Vandenberghe著， 王书宁等译<br>
+[2] 维基百科-Lagrange multiplier <a href="https://en.wikipedia.org/wiki/Lagrange_multiplier" class="uri" target="_blank" rel="external">https://en.wikipedia.org/wiki/Lagrange_multiplier</a><br>
+[3] 维基百科-拉格朗日乘数 <a href="https://zh.wikipedia.org/wiki/拉格朗日乘数" class="uri" target="_blank" rel="external">https://zh.wikipedia.org/wiki/拉格朗日乘数</a><br>
+[4]《统计学习方法》，李航著</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/凸优化/" rel="tag"># 凸优化</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/23/python-encoding/" rel="next" title="Python2.7编码处理小结">
+                <i class="fa fa-chevron-left"></i> Python2.7编码处理小结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/20/svm/" rel="prev" title="SVM">
+                SVM <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/03/18/convex-optimization/"
+           data-title="凸优化简介" data-url="http://yoursite.com/2017/03/18/convex-optimization/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/blogImg/zhanghu798.jpg"
+               alt="张虎" />
+          <p class="site-author-name" itemprop="name">张虎</p>
+          <p class="site-description motion-element" itemprop="description">记录、交流、进步</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.xinyao.pub/" title="李昕垚" target="_blank">李昕垚</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#几个基本概念"><span class="nav-text">1. 几个基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#凸集"><span class="nav-text">1.1. 凸集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#仿射集"><span class="nav-text">1.2. 仿射集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#凸函数"><span class="nav-text">1.3. 凸函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#凸函数的判断"><span class="nav-text">1.3.1. 凸函数的判断</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#根据定义判断"><span class="nav-text">1.3.1.1. 根据定义判断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一阶条件判断"><span class="nav-text">1.3.1.2. 一阶条件判断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二阶条件判断"><span class="nav-text">1.3.1.3. 二阶条件判断</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#仿射函数"><span class="nav-text">1.4. 仿射函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化与凸优化问题表示"><span class="nav-text">2. 优化与凸优化问题表示</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#优化问题的一般形式"><span class="nav-text">2.1. 优化问题的一般形式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#凸优化问题的一般形式"><span class="nav-text">2.2. 凸优化问题的一般形式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#拉格朗日乘子法"><span class="nav-text">3. 拉格朗日乘子法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#广义拉格朗日函数"><span class="nav-text">3.1. 广义拉格朗日函数:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拉格朗日函数"><span class="nav-text">3.2. 拉格朗日函数:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拉格朗日函数的理解"><span class="nav-text">3.3. 拉格朗日函数的理解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一个等式的约束问题"><span class="nav-text">3.3.1. 一个等式的约束问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多个等式约束问题"><span class="nav-text">3.3.2. 多个等式约束问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一个不等式等式约束"><span class="nav-text">3.3.3. 一个不等式等式约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多个不等式约束"><span class="nav-text">3.3.4. 多个不等式约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多个等式约束和多个不等式约束的情况"><span class="nav-text">3.3.5. 多个等式约束和多个不等式约束的情况</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原问题的拉格朗日函数"><span class="nav-text">3.4. 原问题的拉格朗日函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原问题的拉格朗日对偶函数"><span class="nav-text">3.5. 原问题的拉格朗日对偶函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原问题拉格朗日函数与对偶函数的关系"><span class="nav-text">3.6. 原问题拉格朗日函数与对偶函数的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#slater-准则"><span class="nav-text">3.7. Slater 准则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kkt条件"><span class="nav-text">3.8. KKT条件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#section"><span class="nav-text">4. …</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-text">5. 参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张虎</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"reset"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("rq0juDBslCtl5aXg0AoWw1q5-gzGzoHsz", "Y03tdkiQrnrHBQzsjfjdL29V");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+
+</body>
+</html>
