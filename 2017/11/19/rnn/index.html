@@ -1,0 +1,1414 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="RNN,Seq2Seq," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/blogImg/zhanghu798.jpg?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Recurrent Neural Network
+
+深度神经网络极大的提高了浅层网络的模型拟合数据的能力
+
+CNN的出现引入了“感受野”的同时共享参数的机制大大减少DNN的网络参数
+
+而RNN的出现则是用“记忆单元”可以使得有时序的数据随着时间改变记忆，这个记忆贯穿整个时间流，从而有了时序处理的能力">
+<meta property="og:type" content="article">
+<meta property="og:title" content="循环神经网络">
+<meta property="og:url" content="http://yoursite.com/2017/11/19/rnn/index.html">
+<meta property="og:site_name" content="张虎的博客">
+<meta property="og:description" content="Recurrent Neural Network
+
+深度神经网络极大的提高了浅层网络的模型拟合数据的能力
+
+CNN的出现引入了“感受野”的同时共享参数的机制大大减少DNN的网络参数
+
+而RNN的出现则是用“记忆单元”可以使得有时序的数据随着时间改变记忆，这个记忆贯穿整个时间流，从而有了时序处理的能力">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/rnn.jpg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/BPTT.jpeg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/lstm.jpg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/BPTT.jpeg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/lstm-forget-gate.jpg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/lstm-update-status.jpg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/lstm-update-memory.jpg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/lstm-output.jpg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/gru.jpg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/dnn_dropout.png">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/seq2seq.jpg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/encoder-decoder.jpg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/beam-search.gif">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/attention-global.jpg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/attention_1.jpeg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/attention_2.jpeg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/attection-local.jpg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/attention_5.jpeg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/attention_6.jpeg">
+<meta property="og:image" content="http://yoursite.com/pic/ml/rnn/feed-intput.jpg">
+<meta property="og:updated_time" content="2018-05-01T13:31:48.782Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="循环神经网络">
+<meta name="twitter:description" content="Recurrent Neural Network
+
+深度神经网络极大的提高了浅层网络的模型拟合数据的能力
+
+CNN的出现引入了“感受野”的同时共享参数的机制大大减少DNN的网络参数
+
+而RNN的出现则是用“记忆单元”可以使得有时序的数据随着时间改变记忆，这个记忆贯穿整个时间流，从而有了时序处理的能力">
+<meta name="twitter:image" content="http://yoursite.com/pic/ml/rnn/rnn.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '49YSP050FE',
+      apiKey: 'dcca29b3b14f21decd6cab3544e195fe',
+      indexName: 'reset.pub',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/11/19/rnn/"/>
+
+
+
+
+
+  <title> 循环神经网络 | 张虎的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?857a9d776bb324f3f63614da1e8c26d0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">张虎的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <h1 class="site-subtitle" itemprop="description"></h1>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input" placeholder="search my blog...">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/19/rnn/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="张虎">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/assets/blogImg/zhanghu798.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="张虎的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="张虎的博客" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                循环神经网络
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-19T23:28:23+08:00">
+                2017-11-19
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-05-01T21:31:48+08:00">
+                2018-05-01
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/DL/" itemprop="url" rel="index">
+                    <span itemprop="name">DL</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/11/19/rnn/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/11/19/rnn/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/11/19/rnn/" class="leancloud_visitors" data-flag-title="循环神经网络">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote class="blockquote-center"><font size="4">Recurrent Neural Network</font></blockquote>
+<ul>
+<li>深度神经网络极大的提高了浅层网络的模型拟合数据的能力<br>
+</li>
+<li>CNN的出现引入了“感受野”的同时共享参数的机制大大减少DNN的网络参数<br>
+</li>
+<li>而RNN的出现则是用“记忆单元”可以使得有时序的数据随着时间改变记忆，这个记忆贯穿整个时间流，从而有了时序处理的能力</li>
+</ul>
+<a id="more"></a>
+<h1 id="rnn及变种">1. RNN及变种</h1>
+<h2 id="rnn">1.1. RNN</h2>
+<p><a href="http://www.wildml.com/2015/10/recurrent-neural-networks-tutorial-part-3-backpropagation-through-time-and-vanishing-gradients/" target="_blank" rel="external">Recurrent Neural Networks Tutorial</a></p>
+<img src="/pic/ml/rnn/rnn.jpg" border="0" width="90%" height="90%" style="margin: 0 auto">
+<center>
+<a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="external">RNN结构及按时序展开图</a>
+</center>
+<hr>
+<p>网络结构的公式 <span class="math display">\[\left .
+\begin{aligned}
+&amp; \text{h}_t = f \big(\text{x}_t \text{U}   +  \text{h}_{t-1} \text{W}  + b_h \big  )  \\
+&amp; 
+\hat{\text{y}_t} = \text{softmax}( \text{h}_t \text{V}  + b_y)  
+\end{aligned}
+\right.                                \tag{1}
+\]</span></p>
+<p>参数说明：</p>
+<table>
+<colgroup>
+<col width="15%">
+<col width="84%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">参数</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><span class="math inline">\(\text{x}_t\)</span></td>
+<td align="center">第t时刻的输入。假设：<span class="math inline">\(1 \times n_x\)</span>。 <span class="math inline">\(n_x\)</span>：一般指输入数据纬度， 如文本问题中，embedding词向量长度大小或one-hot中的长度</td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(\text{h}_t\)</span></td>
+<td align="center">第t时刻的记忆。假设：<span class="math inline">\(1 \times n_h\)</span>。 <span class="math inline">\(n_h\)</span>：隐层的维度</td>
+</tr>
+<tr class="odd">
+<td align="center"><span class="math inline">\(f\)</span></td>
+<td align="center">非线形激励。如：tanh</td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(\text{U}\)</span></td>
+<td align="center">输入系数矩阵, <span class="math inline">\(n_x \times n_h\)</span></td>
+</tr>
+<tr class="odd">
+<td align="center"><span class="math inline">\(\text{W}\)</span></td>
+<td align="center">记忆系数矩阵, <span class="math inline">\(n_h \times n_h\)</span></td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(\text{V}\)</span></td>
+<td align="center">输出系数矩阵, <span class="math inline">\(n_h \times \text{vocab_size} 。\text{vocab_size}\)</span>：非限定</td>
+</tr>
+<tr class="odd">
+<td align="center">$_t $</td>
+<td align="center">第t时刻的输出, <span class="math inline">\(1 \times \text{vocab_size}。\text{vocab_size}\)</span>: 词库大小</td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(b_h\)</span></td>
+<td align="center">偏置，<span class="math inline">\(1 \times n_h\)</span>。更确切的说，这个是属于softmax层的参数</td>
+</tr>
+<tr class="odd">
+<td align="center"><span class="math inline">\(b_y\)</span></td>
+<td align="center">偏置, <span class="math inline">\(1 \times \text{vocab_size} 。\text{vocab_size}\)</span>：预测词库大小，非限定。softmax层参数</td>
+</tr>
+</tbody>
+</table>
+<p>对于RNNLM：</p>
+<ul>
+<li>损失函数： 对于第<span class="math inline">\(t\)</span>时刻的one-hot形式的标准结果<span class="math inline">\(h_t\)</span>, 使用交叉熵</li>
+</ul>
+<p><span class="math display">\[
+\text{loss }_t = \text{-y}_t \log \hat{\text{y}}_t        \tag{2}
+\]</span></p>
+<ul>
+<li>整体loss <span class="math display">\[
+\text{Loss} = \sum_{t}^{T} \text{loss}_t        \tag{3}
+\]</span></li>
+</ul>
+<h1 id="bptt">2. BPTT</h1>
+<p>RNN的训练方法： Backpropagation Through Time</p>
+<img src="/pic/ml/rnn/BPTT.jpeg" border="0" width="90%" height="90%" style="margin: 0 auto">
+<center>
+<a href="http://www.wildml.com/2015/10/recurrent-neural-networks-tutorial-part-3-backpropagation-through-time-and-vanishing-gradients/" target="_blank" rel="external">BPTT示意图</a>
+</center>
+<p><span class="math display">\[
+\begin{aligned}
+ \frac{\partial{\text{loss}_t}}{\partial{W}} 
+  = &amp;  \sum_{k=0}^{T}  \frac{\partial{\text{loss}_t}}{\partial{\text{W}_{k}}}  \\
+  = &amp;  \sum_{k=0}^{T}  \frac{\partial{\text{loss}_t}}{\partial{\hat{\text{y}}_t}} \
+        \frac{\partial{\hat{\text{y}}_t}}{\partial{\hat{\text{h}}_{t}}} \
+        \frac{\partial{\hat{\text{h}}_t}}{\partial{\hat{\text{h}}_{k}}} \
+        \frac{\partial{\hat{\text{h}}_{k}}}{\partial{\text{W}_{k}}} \\
+  = &amp; \sum_{k=0}^{T} \
+        \frac{\partial{L_T}}{\partial{\hat{\text{y}}_t}}  \
+        \frac{\partial{\hat{\text{y}}_t}}{\partial{\hat{\text{h}}_{t}}} \
+        \Bigg(\prod_{j=k+1}^{t}  \frac{\partial{\hat{\text{h}}_j}}{\partial{\hat{\text{h}}_{j-1}}}   \Bigg) \
+        \frac{\partial{\hat{\text{h}}_{k}}}{\partial{\text{W}_{k}}}
+\end{aligned}  \tag{4}
+\]</span></p>
+<ul>
+<li>特别说明：
+<ul>
+<li><span class="math inline">\(\text{W}\)</span>是整个过程中共享的</li>
+<li>上式中<span class="math inline">\({\text{W}_{k}}\)</span>特指在地<span class="math inline">\(k\)</span>时刻的对应的<span class="math inline">\(\text{W}\)</span>, 表示第<span class="math inline">\(k\)</span>时刻的隐藏（记忆）状态<span class="math inline">\(\text{h}_{k}\)</span>是由<span class="math inline">\({\text{W}_{k}}\)</span>得到的， 即，在上式中，<span class="math inline">\(\text{W}\)</span>看做是<span class="math inline">\(k\)</span>个独立<span class="math inline">\({\text{W}_{k}}\)</span>，只是具有相同的值<span class="math inline">\(\text{W}\)</span></li>
+</ul></li>
+</ul>
+<p><span class="math display">\[\frac{\partial{\hat{\text{h}}_j}}{\partial{\hat{\text{h}}_{j-1}}}  = \frac{\partial{\hat{f}_j}}{\partial{\text{v}_{f_{in}}}} W            \tag{5}\]</span></p>
+<p>将式（5）代入（4）导致RNN做BP时，在长时序列数据训练时容易导致梯度爆炸或远处时刻的损失反映不到参数的梯度上（相对梯度消失）。</p>
+<p>对于梯度爆炸，可以通过梯度裁剪的方法使得问题被避免：</p>
+<p><span class="math display">\[\boldsymbol{g} = \min\left(\frac{\theta}{\|\boldsymbol{g}\|}, 1\right)\boldsymbol{g}      \tag{6}\]</span></p>
+<p>这种形式类似BN层，都是把异常数据强制拉回到正常状态（BN层是将参数分布拉到正态分布，梯度剪裁是强制将过大的梯度设置为1）</p>
+<h2 id="lstm">2.1. LSTM</h2>
+<p>1997</p>
+<p><a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="external"><strong>L</strong>ong <strong>S</strong>hort <strong>T</strong>erm <strong>M</strong>emory</a></p>
+<p>LSTM通过引入“遗忘门”及“记忆叠加门”使得记忆更加灵活，而选择记忆+叠加新记忆更新为新的记忆状态的形式也使得LSTM具有相比RNN的梯度消失和梯度爆炸问题得到较大的缓解，从而使得LSTM可以处理较长时序问题</p>
+<h3 id="内部结构示意图">2.1.1. 内部结构示意图</h3>
+<img src="/pic/ml/rnn/lstm.jpg" border="0" width="80%" height="80%" style="margin: 0 auto">
+<center>
+<a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="external">单层LSTM内部结构示意图</a>
+</center>
+
+<h3 id="rnn的反向传播bptt-backpropagation-through-time">2.1.2. RNN的反向传播BPTT （Backpropagation Through Time）</h3>
+<img src="/pic/ml/rnn/BPTT.jpeg" border="0" width="80%" height="80%" style="margin: 0 auto">
+<center>
+<a href="http://www.wildml.com/2015/10/recurrent-neural-networks-tutorial-part-3-backpropagation-through-time-and-vanishing-gradients/" target="_blank" rel="external">BPTT示意图</a>
+</center>
+<h3 id="lstm内部示意图及计算方法">2.1.3. LSTM内部示意图及计算方法</h3>
+<table>
+<thead>
+<tr class="header">
+<th align="center"><img src="/pic/ml/rnn/lstm-forget-gate.jpg"> <a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="external">忘记门</a></th>
+<th align="center"><img src="/pic/ml/rnn/lstm-update-status.jpg"> <a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="external">输入和输入门</a></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><img src="/pic/ml/rnn/lstm-update-memory.jpg"> <a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="external">更新cell状态</a></td>
+<td align="center"><img src="/pic/ml/rnn/lstm-output.jpg"> <a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="external">输出门</a></td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[
+\left .
+\begin{aligned}
+&amp;f_t = \sigma(W_f \cdot  [h_{t-1}, x_t] + b_f)   &amp;  &amp; 忘记门，忘记系数，决定的丢弃记忆\\
+&amp;i_t = \sigma(W_i \cdot  [h_{t-1}, x_t] + b_i)    &amp; &amp; 新的记忆 ，决定增强的记忆\\ 
+&amp; \widetilde{C}_t = \text{tanh}\big(W_C \cdot  [h_{t-1}, x_t] + b_c\big) &amp;  &amp; 新的记忆选择系数，记忆增强/降低的系数 \\
+&amp;C_t = f_t \odot C_{t-1} + i_t \odot \widetilde{C}_t   &amp; &amp; 更新记忆：忘记 \times 忘记系数 + 新记忆 \times 新记忆系数\\  
+&amp; o_t = \sigma \big(W_O[h_{t-1}, x_t] + b_O\big)  &amp; &amp; 上一时刻的输出和本次输入决定本次的主要结果\\
+&amp; h_t= o_t \cdot \text{tanh} \big(C_t\big) &amp; &amp; 前一时刻状态和输入，通过记忆的输出单元的转化  \\
+\end{aligned}
+\right. \tag{7}
+\]</span></p>
+<h2 id="gru">2.2. GRU</h2>
+<p>2014</p>
+<img src="/pic/ml/rnn/gru.jpg" border="0" width="90%" height="90%" style="margin: 0 auto">
+<center>
+<a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="external">gru内部结构示意图</a>
+</center>
+<h2 id="rnn中的dropout">2.3. RNN中的DropOut</h2>
+<p>将输入向量各个维度随机进行Drop操作，而达到增强泛化的作用， 详见<a href="http://reset.pub/2017/05/19/dnn/#more" class="uri" target="_blank" rel="external">http://reset.pub/2017/05/19/dnn/#more</a></p>
+<p><img src="/pic/ml/rnn/dnn_dropout.png" border="0" width="90%" height="90%" style="margin: 0 auto"></p>
+<ul>
+<li>Bagging</li>
+<li>有性繁殖 VS 无性繁殖</li>
+<li>共享参数</li>
+</ul>
+<p>以p为dropout概率，则</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">is_drop = <span class="keyword">True</span> <span class="keyword">if</span> random(<span class="number">0</span>, <span class="number">1</span>) &lt; p <span class="keyword">else</span> <span class="keyword">False</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> x_i <span class="keyword">not</span> is_drop:</div><div class="line">  x_i = x_i / (<span class="number">1</span> - p)</div></pre></td></tr></table></figure>
+<h1 id="seq2seq">3. Seq2Seq</h1>
+<img src="/pic/ml/rnn/seq2seq.jpg" border="0" width="90%" height="90%" style="margin: 0 auto">
+<center>
+<a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="external">seq2seq基本示意图</a>
+</center>
+<p>  </p>
+<img src="/pic/ml/rnn/encoder-decoder.jpg" border="0" width="90%" height="90%" style="margin: 0 auto">
+<center>
+<a href="https://github.com/nicolas-ivanov/tf_seq2seq_chatbot" target="_blank" rel="external">encoder-decoder基本示意图</a>
+</center>
+<h2 id="beam-search">3.1. Beam-search</h2>
+<p>用于最大路径概率预测， 主要是降低时间复杂度。通常是计算时序问题的最大概率路径问题。如HMM，CRF中给定模型参数，求最大概率路径问题。是动态规划每次截断第t-1的前K大路径，传播到第t时刻。 Beam-search是一种介于viterbi和贪心算法见的算法。是最优解和最快效率的一个平衡</p>
+<h3 id="beam-search示意图">3.1.1. Beam-search示意图</h3>
+<img src="/pic/ml/rnn/beam-search.gif" border="0" width="90%" height="90%" style="margin: 0 auto">
+<center>
+<a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="external">beam-search</a>
+</center>
+<h3 id="求最大概率路径的算法对比">3.1.2. 求最大概率路径的算法对比</h3>
+<p>假设每一步都有n个状态，一共有s个时间步</p>
+<table>
+<colgroup>
+<col width="11%">
+<col width="61%">
+<col width="26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">算法</th>
+<th align="center">时间复杂度</th>
+<th align="center">是否最优</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">穷举</td>
+<td align="center"><span class="math inline">\(n^s\)</span></td>
+<td align="center">是</td>
+</tr>
+<tr class="even">
+<td align="center">viterbi</td>
+<td align="center"><span class="math inline">\(s \times n^2\)</span></td>
+<td align="center">是</td>
+</tr>
+<tr class="odd">
+<td align="center">贪心</td>
+<td align="center"><span class="math inline">\(s \times n \times k\)</span>, 即Beam search中的<span class="math inline">\(k=1\)</span>的情况</td>
+<td align="center">否</td>
+</tr>
+<tr class="even">
+<td align="center">Beam search</td>
+<td align="center"><span class="math inline">\(s \times n \times k\)</span>。<span class="math inline">\(1 \leq k \leq n\)</span>。 当<span class="math inline">\(k=1\)</span>时为贪心算法; 当<span class="math inline">\(k=n\)</span>时，为viterbi算法</td>
+<td align="center">否</td>
+</tr>
+</tbody>
+</table>
+<h2 id="attention">3.2. Attention</h2>
+<p><a href="https://github.com/mli/gluon-tutorials-zh/blob/master/chapter_natural-language-processing/nmt.md" class="uri" target="_blank" rel="external">https://github.com/mli/gluon-tutorials-zh/blob/master/chapter_natural-language-processing/nmt.md</a></p>
+<blockquote>
+<p>attention主要解决信息过剩（RNN时间步较长后梯度消失或爆炸）的情况下，通常需要关注某些主要因素时，进行注意力分配的问题</p>
+</blockquote>
+<p>attention的本质是对历史状态加权作为输入的一部分，达到注意力的目的 即如下式1中<span class="math inline">\(C_t\)</span>是注意力部分</p>
+<ul>
+<li><p>注意力计算部分 <span class="math display">\[C_t = \overline{h}_s \odot a_t                          \tag{9}\]</span> 注意力计算如下式，其中<span class="math inline">\(\overline{h}_s\)</span>是历史数据向量组成的向量，<span class="math inline">\(a_t\)</span>对应的权值</p></li>
+<li><p>注意力和当前状态合并作为输入进行预测</p></li>
+</ul>
+<p><span class="math display">\[\tilde{h}_t = \tanh(W_c[C_t; h_t])                    \tag{8}\]</span></p>
+<h3 id="global-attentionsoft-attention">3.2.1. global-attention(soft attention)</h3>
+<p>  </p>
+<img src="/pic/ml/rnn/attention-global.jpg" border="0" width="60%" height="60%" style="margin: 0 auto">
+<center>
+<a href="https://arxiv.org/abs/1508.04025" target="_blank" rel="external">attention-global基本示意图</a>
+</center>
+<p>  </p>
+<img src="/pic/ml/rnn/attention_1.jpeg" border="0" width="40%" height="40%" style="margin: 0 auto">
+<center>
+<a href="https://arxiv.org/abs/1508.04025" target="_blank" rel="external">归一化的权重计算</a>
+</center>
+<p>  </p>
+<img src="/pic/ml/rnn/attention_2.jpeg" border="0" width="40%" height="40%" style="margin: 0 auto">
+<center>
+<a href="https://arxiv.org/abs/1508.04025" target="_blank" rel="external">权重计算</a>
+</center>
+<h3 id="local-attentionhard-attention">3.2.2. local-attention(hard attention)</h3>
+<p>详见论文 <a href="https://arxiv.org/abs/1508.04025" target="_blank" rel="external">Effective Approaches to Attention-based Neural Machine Translation</a></p>
+<img src="/pic/ml/rnn/attection-local.jpg" border="0" width="60%" height="30%" style="margin: 0 auto">
+<center>
+<a href="https://arxiv.org/abs/1508.04025" target="_blank" rel="external">attion-local基本示意图</a>
+</center>
+<img src="/pic/ml/rnn/attention_5.jpeg" border="0" width="40%" height="40%" style="margin: 0 auto">
+<center>
+<a href="https://arxiv.org/abs/1508.04025" target="_blank" rel="external">权重计算</a>
+</center>
+<img src="/pic/ml/rnn/attention_6.jpeg" border="0" width="40%" height="40%" style="margin: 0 auto">
+<center>
+<a href="https://arxiv.org/abs/1508.04025" target="_blank" rel="external">核心位置计算</a>
+</center>
+<h2 id="seq2seq中的其他trick">3.3. seq2seq中的其他trick</h2>
+<ul>
+<li><p>unk replace</p></li>
+<li><p>reverse</p></li>
+<li><p>feed input</p></li>
+</ul>
+<img src="/pic/ml/rnn/feed-intput.jpg" border="0" width="60%" height="30%" style="margin: 0 auto">
+<center>
+<a href="https://arxiv.org/abs/1508.04025" target="_blank" rel="external">feed-input</a>
+</center>
+<h1 id="参考">4. 参考</h1>
+<p><a href="https://arxiv.org/abs/1603.06393" target="_blank" rel="external">Incorporating Copying Mechanism in Sequence-to-Sequence Learning</a><br>
+<a href="http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-1-introduction-to-rnns/" target="_blank" rel="external">Recurrent Neural Networks Tutorial</a><br>
+<a href="https://arxiv.org/abs/1406.1078" target="_blank" rel="external">Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation</a><br>
+<a href="https://arxiv.org/abs/1508.04025" target="_blank" rel="external">Effective Approaches to Attention-based Neural Machine Translation</a><br>
+<a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="external">Understanding LSTM Networks</a><br>
+<a href="http://www.jianshu.com/p/9dc9f41f0b29" target="_blank" rel="external">[译] 理解 LSTM 网络</a><br>
+<a href="https://arxiv.org/abs/1606.02960" target="_blank" rel="external">Sequence-to-Sequence Learning as Beam-Search Optimization</a><br>
+<a href="Sequence%20to%20Sequence%20Learning%20with%20Neural%20Networks">Sequence to Sequence Learning with Neural Networks</a><br>
+<a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="external">Attention Is All You Need</a><br>
+<a href="https://arxiv.org/abs/1409.2329" target="_blank" rel="external">Recurrent Neural Network Regularization</a><br>
+<a href="https://machinelearningmastery.com/use-dropout-lstm-networks-time-series-forecasting/" target="_blank" rel="external">How to Use Dropout with LSTM Networks for Time Series Forecasting</a><br>
+<a href="http://proceedings.mlr.press/v37/jozefowicz15.pdf?utm_campaign=Revue%20newsletter&amp;utm_medium=Newsletter&amp;utm_source=revue" target="_blank" rel="external">An Empirical Exploration of Recurrent Network Architectures</a><br>
+<a href="http://www.hangli-hl.com/uploads/3/4/4/6/34465961/deep_learning_for_natural_language_processing.pdf" target="_blank" rel="external">Deep Learning for Natural Language Processing : Hang Li</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RNN/" rel="tag"># RNN</a>
+          
+            <a href="/tags/Seq2Seq/" rel="tag"># Seq2Seq</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/23/cnn/" rel="next" title="卷积神经网络简介">
+                <i class="fa fa-chevron-left"></i> 卷积神经网络简介
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/blogImg/zhanghu798.jpg"
+               alt="张虎" />
+          <p class="site-author-name" itemprop="name">张虎</p>
+          <p class="site-description motion-element" itemprop="description">记录、交流、进步</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.xinyao.pub/" title="李昕垚" target="_blank">李昕垚</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="notes.cribug.com" title="小强" target="_blank">小强</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#rnn及变种"><span class="nav-text">1. RNN及变种</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#rnn"><span class="nav-text">1.1. RNN</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bptt"><span class="nav-text">2. BPTT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#lstm"><span class="nav-text">2.1. LSTM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#内部结构示意图"><span class="nav-text">2.1.1. 内部结构示意图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rnn的反向传播bptt-backpropagation-through-time"><span class="nav-text">2.1.2. RNN的反向传播BPTT （Backpropagation Through Time）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lstm内部示意图及计算方法"><span class="nav-text">2.1.3. LSTM内部示意图及计算方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gru"><span class="nav-text">2.2. GRU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rnn中的dropout"><span class="nav-text">2.3. RNN中的DropOut</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#seq2seq"><span class="nav-text">3. Seq2Seq</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#beam-search"><span class="nav-text">3.1. Beam-search</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#beam-search示意图"><span class="nav-text">3.1.1. Beam-search示意图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#求最大概率路径的算法对比"><span class="nav-text">3.1.2. 求最大概率路径的算法对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#attention"><span class="nav-text">3.2. Attention</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#global-attentionsoft-attention"><span class="nav-text">3.2.1. global-attention(soft attention)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#local-attentionhard-attention"><span class="nav-text">3.2.2. local-attention(hard attention)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#seq2seq中的其他trick"><span class="nav-text">3.3. seq2seq中的其他trick</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-text">4. 参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张虎</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'reset-pub';
+      var disqus_identifier = '2017/11/19/rnn/';
+
+      var disqus_title = "循环神经网络";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("rq0juDBslCtl5aXg0AoWw1q5-gzGzoHsz", "Y03tdkiQrnrHBQzsjfjdL29V");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,1166 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="集成方法,gcForest," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/blogImg/zhanghu798.jpg?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="multi-Grained Cascade Forest
+深度级联森林：决策树模型具有可解释性强的优点，多个决策树构成随机森林，多层多个森林构成深度森林
+gcForest是西瓜书作者周志华博士和冯霁博士提出的一基于随机森林的深度森林的方法，尝试用深度森林的方法解决深度神经网络中存在的问题：
+
+需要大量样本才能使得深度神经网络有较好的性能
+调参困难
+对硬件性能要求较高
+
+论文中实验了在小数据集上gc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gcForest">
+<meta property="og:url" content="http://yoursite.com/2017/03/31/gcForest/index.html">
+<meta property="og:site_name" content="张虎的博客">
+<meta property="og:description" content="multi-Grained Cascade Forest
+深度级联森林：决策树模型具有可解释性强的优点，多个决策树构成随机森林，多层多个森林构成深度森林
+gcForest是西瓜书作者周志华博士和冯霁博士提出的一基于随机森林的深度森林的方法，尝试用深度森林的方法解决深度神经网络中存在的问题：
+
+需要大量样本才能使得深度神经网络有较好的性能
+调参困难
+对硬件性能要求较高
+
+论文中实验了在小数据集上gc">
+<meta property="og:image" content="http://yoursite.com/pic/ml/gcForest/gcForest_class_vector.png">
+<meta property="og:image" content="http://yoursite.com/pic/ml/gcForest/gcForest_struct.png">
+<meta property="og:image" content="http://yoursite.com/pic/ml/gcForest/gcForest_multi-grained-scanning.png">
+<meta property="og:image" content="http://yoursite.com/pic/ml/gcForest/gcForest_struct-with-grained-scanning.png">
+<meta property="og:updated_time" content="2017-04-01T13:45:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="gcForest">
+<meta name="twitter:description" content="multi-Grained Cascade Forest
+深度级联森林：决策树模型具有可解释性强的优点，多个决策树构成随机森林，多层多个森林构成深度森林
+gcForest是西瓜书作者周志华博士和冯霁博士提出的一基于随机森林的深度森林的方法，尝试用深度森林的方法解决深度神经网络中存在的问题：
+
+需要大量样本才能使得深度神经网络有较好的性能
+调参困难
+对硬件性能要求较高
+
+论文中实验了在小数据集上gc">
+<meta name="twitter:image" content="http://yoursite.com/pic/ml/gcForest/gcForest_class_vector.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '49YSP050FE',
+      apiKey: 'dcca29b3b14f21decd6cab3544e195fe',
+      indexName: 'reset.pub',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/31/gcForest/"/>
+
+
+
+
+
+  <title> gcForest | 张虎的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?857a9d776bb324f3f63614da1e8c26d0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">张虎的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <h1 class="site-subtitle" itemprop="description"></h1>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input" placeholder="search my blog...">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/31/gcForest/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="张虎">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/assets/blogImg/zhanghu798.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="张虎的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="张虎的博客" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                gcForest
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-31T02:29:40+08:00">
+                2017-03-31
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2017-04-01T21:45:43+08:00">
+                2017-04-01
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/集成方法/" itemprop="url" rel="index">
+                    <span itemprop="name">集成方法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/03/31/gcForest/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/31/gcForest/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/03/31/gcForest/" class="leancloud_visitors" data-flag-title="gcForest">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote class="blockquote-center"><font size="4">multi-Grained Cascade Forest</font></blockquote>
+<p>深度级联森林：决策树模型具有可解释性强的优点，多个决策树构成随机森林，多层多个森林构成深度森林</p>
+<p>gcForest是西瓜书作者周志华博士和冯霁博士提出的一基于随机森林的深度森林的方法，尝试用深度森林的方法解决深度神经网络中存在的问题：</p>
+<ul>
+<li>需要大量样本才能使得深度神经网络有较好的性能</li>
+<li>调参困难</li>
+<li>对硬件性能要求较高</li>
+</ul>
+<p>论文中实验了在小数据集上gcForest，取得了不错的效果</p>
+<p>论文地址：<a href="https://arxiv.org/pdf/1702.08835.pdf" class="uri" target="_blank" rel="external">https://arxiv.org/pdf/1702.08835.pdf</a><br>
+部分翻译：<a href="http://it.sohu.com/20170302/n482153688.shtml" class="uri" target="_blank" rel="external">http://it.sohu.com/20170302/n482153688.shtml</a></p>
+<a id="more"></a>
+<h1 id="算法基本思路">1. 算法基本思路</h1>
+<p>gcForest是西瓜书作者周志华博士和冯霁博士提出的一基于随机森林的深度森林的方法，是一种“ensemble of ensembles”的方法。类似深度神经网络，深度森林是每层是由多个随机森林组成，每层的随机森林是由完全随机森林及随机森林组成</p>
+<blockquote>
+<ul>
+<li><strong>完全随机</strong>森林的构建：构建1000个(超参数)<strong>完全随机</strong>树。完全决策树的构建过程：对于所有的特征，随机选择特征，随机选择特征下的split值，一直生长，直到每个叶节点包含相同的类别或者不超过10（超参数）个时，决策树训练停止</li>
+<li>随机森林的构建：构建1000个(超参数）决策树。决策树的构建过程：从<span class="math inline">\(d\)</span>个特征，随机抽取<span class="math inline">\(\sqrt{d}\)</span>个特证，由gini系数做为特征选择及分裂的标准构建CART决策树</li>
+</ul>
+</blockquote>
+<p>每一层经过多个森林处理的输出作为下级的输入，当到达某一层没有明显的性能提升(超参数)时，级连森林停止生长</p>
+<h1 id="算法流程">2. 算法流程</h1>
+<h2 id="类向量的训练">2.1. 类向量的训练</h2>
+<img src="/pic/ml/gcForest/gcForest_class_vector.png" width="80%" height="80%" style="margin: 0 auto">
+<center>
+（<a href="https://arxiv.org/pdf/1702.08835.pdf" target="_blank" rel="external">图1，类向量生成示意图</a>)
+</center>
+<p>图片说明：图中有两个小bug，第一个决策树“红圈”内的叶子节点少了一个“椭圆”，第三个决策树“红圈”内应该全为“正方形”</p>
+<p>假设为k分类问题<br>
+1，针对已经训练好的森林中的树时，记录每个叶子节点的样本类别，按类别统计叶子节点的权重得到k维向量，树模型的每个叶子节点都对应一个k维向量(带key的向量，如，label_1：0.5, label_2:0.3, lable_3=0.2)。</p>
+<p>2，给定一个样本经过树的运算到达叶子节点，对应一个k维向量，一个随机森林中对应1000个k维向量， 将1000个k维向量按照类别求平均，平均后的k维向量即为该样本在该森林上的类向量</p>
+<h2 id="级连森林训练">2.2. 级连森林训练</h2>
+<img src="/pic/ml/gcForest/gcForest_struct.png" width="80%" height="80%" style="margin: 0 auto">
+<center>
+（<a href="https://arxiv.org/pdf/1702.08835.pdf" target="_blank" rel="external">图2，级连森林模型示意图。 蓝色：随机森林。黑色：完全随森林</a>)
+</center>
+<p>伪代码如下： <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">model</span><span class="params">(input_data_list_list, label_list)</span>:</span></div><div class="line">    <span class="string">"""</span></div><div class="line">    input_data_list_list: 训练样本列表</div><div class="line">    label_list:  标签列表</div><div class="line">    """</div><div class="line"></div><div class="line">    i ＝ <span class="number">-1</span>  ＃ 第i层级连森林 </div><div class="line">    feture_list_list = []</div><div class="line">	</div><div class="line">    model_list_list = []</div><div class="line">    feture_list_list[<span class="number">0</span>] = input_data</div><div class="line">    performance = <span class="number">0</span> ＃ 初始化准确率</div><div class="line">    <span class="keyword">while</span> <span class="number">1</span>:</div><div class="line">        i += <span class="number">1</span></div><div class="line">		</div><div class="line">        modle_complete_rf_list, modle_rf_list &lt;- 以feture_list[i]为特征， label_list为样本标签，并行训练完全随机森林和随机森林</div><div class="line">        model_list_list[i] = [modle_complete_rf_list, modle_rf_list]</div><div class="line">        </div><div class="line">        <span class="comment"># 统计该层的性能（如：正确率，准确率，召回率等）</span></div><div class="line">        new_performance &lt;- 根据各森林的每个树的叶子节点统计性能</div><div class="line">			</div><div class="line">        <span class="comment"># 对比上层森林群的结果，对比上层性能增加是否达到阈值theta（阈值： 超参数）</span></div><div class="line">        <span class="keyword">if</span> new_performance - performance &gt; theta:</div><div class="line">            <span class="keyword">return</span> model_list_list ＃ 输出模型</div><div class="line">			</div><div class="line">        <span class="comment"># 更新性能统计</span></div><div class="line">        performance = new_performance</div></pre></td></tr></table></figure></p>
+<h2 id="级连森林预测">2.3. 级连森林预测</h2>
+<p>伪代码如下： <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">fit</span><span class="params">(x, model_list_list)</span>:</span></div><div class="line">    <span class="string">'''</span></div><div class="line">    x：待预测样本</div><div class="line">    model_list_list：级连森林模型，model_list_list[0]：列表，代表第0层的森林模型列表</div><div class="line">    '''</div><div class="line">    feture_list = x</div><div class="line">	</div><div class="line">    <span class="comment"># 循环每层级连森林</span></div><div class="line">    <span class="keyword">for</span> model_list <span class="keyword">in</span> model_list_list:</div><div class="line">        class_vector_list &lt;- 获得特征向量在m+n个森林上的m＋n个类向量</div><div class="line">        feture_list &lt;- 串行化类向量class_vector_list</div><div class="line">	   </div><div class="line">    result &lt;- 按标签分组，分别求权重均值。找出最大平均值对应的类别即为预测结果</div></pre></td></tr></table></figure></p>
+<h1 id="使用多粒度扫描做特征处理">3. 使用多粒度扫描做特征处理</h1>
+<ul>
+<li>多粒度扫描结构 <img src="/pic/ml/gcForest/gcForest_multi-grained-scanning.png" width="100%" height="100%" style="margin: 0 auto">
+<center>
+（<a href="https://arxiv.org/pdf/1702.08835.pdf" target="_blank" rel="external">图3，多粒度扫描示结构意图</a>)
+</center></li>
+<li>带多粒度扫描的级连森林结构 <img src="/pic/ml/gcForest/gcForest_struct-with-grained-scanning.png" width="100%" height="100%" style="margin: 0 auto">
+<center>
+（<a href="https://arxiv.org/pdf/1702.08835.pdf" target="_blank" rel="external">图4，带多粒度扫描的增强级连森林示结构意图</a>)
+</center></li>
+<li>描述：<br>
+类似卷机神经网络的Pooling，深度森林也引入“滑动窗口”，替代pooling层的方法max-pooling, mean-pooling的计算方式为多个森林（完全随机森林和随机森林）后的类向量串行，具体过程大概如下： 每次滑动窗口选出来的特征经过随机森林和完全随机森林经过多个森林建模后得到类向量，串联类向量作为新的特征作为下一级的输入层</li>
+<li>假设原始特征长度为m，滑动窗口长度为n(n &lt; m)，滑动窗口个数：[n, m]即共有m-n+1个滑动窗口</li>
+<li>可以并行接入不同窗口做Pooling操作</li>
+</ul>
+<h1 id="参考资料">4. 参考资料</h1>
+<p>[1] <a href="https://arxiv.org/pdf/1702.08835.pdf" target="_blank" rel="external">Deep Forest: Towards An Alternative to Deep Neural Networks</a>，Zhi-Hua Zhou and Ji Feng，2017.02.28<br>
+[2] <a href="http://it.sohu.com/20170302/n482153688.shtml" class="uri" target="_blank" rel="external">http://it.sohu.com/20170302/n482153688.shtml</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/集成方法/" rel="tag"># 集成方法</a>
+          
+            <a href="/tags/gcForest/" rel="tag"># gcForest</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/31/forward-stagewise-algorith/" rel="next" title="前向分步算法">
+                <i class="fa fa-chevron-left"></i> 前向分步算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/01/xgboost/" rel="prev" title="XGBoost">
+                XGBoost <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/blogImg/zhanghu798.jpg"
+               alt="张虎" />
+          <p class="site-author-name" itemprop="name">张虎</p>
+          <p class="site-description motion-element" itemprop="description">记录、交流、进步</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.xinyao.pub/" title="李昕垚" target="_blank">李昕垚</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="notes.cribug.com" title="小强" target="_blank">小强</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#算法基本思路"><span class="nav-text">1. 算法基本思路</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#算法流程"><span class="nav-text">2. 算法流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#类向量的训练"><span class="nav-text">2.1. 类向量的训练</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#级连森林训练"><span class="nav-text">2.2. 级连森林训练</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#级连森林预测"><span class="nav-text">2.3. 级连森林预测</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用多粒度扫描做特征处理"><span class="nav-text">3. 使用多粒度扫描做特征处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-text">4. 参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张虎</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'reset-pub';
+      var disqus_identifier = '2017/03/31/gcForest/';
+
+      var disqus_title = "gcForest";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("rq0juDBslCtl5aXg0AoWw1q5-gzGzoHsz", "Y03tdkiQrnrHBQzsjfjdL29V");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+</body>
+</html>

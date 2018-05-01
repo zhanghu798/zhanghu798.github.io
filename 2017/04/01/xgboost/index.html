@@ -1,0 +1,1240 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="集成方法,XGBoost," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/blogImg/zhanghu798.jpg?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="eXtreme Gradient Boosting
+XGBoost是GBDT的一种实现的代码库，同样也是集成方法的一种
+相对原始GBDT主要有以下改进
+
+在目标函数中加入模型复杂度
+
+利用泰勒展开式的前两项作为目标函数的近似
+损失函数自定义">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XGBoost">
+<meta property="og:url" content="http://yoursite.com/2017/04/01/xgboost/index.html">
+<meta property="og:site_name" content="张虎的博客">
+<meta property="og:description" content="eXtreme Gradient Boosting
+XGBoost是GBDT的一种实现的代码库，同样也是集成方法的一种
+相对原始GBDT主要有以下改进
+
+在目标函数中加入模型复杂度
+
+利用泰勒展开式的前两项作为目标函数的近似
+损失函数自定义">
+<meta property="og:updated_time" content="2017-04-03T08:17:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="XGBoost">
+<meta name="twitter:description" content="eXtreme Gradient Boosting
+XGBoost是GBDT的一种实现的代码库，同样也是集成方法的一种
+相对原始GBDT主要有以下改进
+
+在目标函数中加入模型复杂度
+
+利用泰勒展开式的前两项作为目标函数的近似
+损失函数自定义">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '49YSP050FE',
+      apiKey: 'dcca29b3b14f21decd6cab3544e195fe',
+      indexName: 'reset.pub',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/01/xgboost/"/>
+
+
+
+
+
+  <title> XGBoost | 张虎的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?857a9d776bb324f3f63614da1e8c26d0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">张虎的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <h1 class="site-subtitle" itemprop="description"></h1>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input" placeholder="search my blog...">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/01/xgboost/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="张虎">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/assets/blogImg/zhanghu798.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="张虎的博客">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="张虎的博客" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                XGBoost
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-04-01T15:18:51+08:00">
+                2017-04-01
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2017-04-03T16:17:52+08:00">
+                2017-04-03
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/集成方法/" itemprop="url" rel="index">
+                    <span itemprop="name">集成方法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/04/01/xgboost/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/04/01/xgboost/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/04/01/xgboost/" class="leancloud_visitors" data-flag-title="XGBoost">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote class="blockquote-center"><font size="4">eXtreme Gradient Boosting</font></blockquote>
+<p>XGBoost是GBDT的一种实现的代码库，同样也是集成方法的一种</p>
+<p>相对原始GBDT主要有以下改进</p>
+<ul>
+<li>在目标函数中加入模型复杂度<br>
+</li>
+<li>利用泰勒展开式的前两项作为目标函数的近似</li>
+<li>损失函数自定义</li>
+</ul>
+<a id="more"></a>
+<p>XGboost快于GBDT的说明：<br>
+1，XGboost使用二阶泰勒展开近似目标，使用函数的极值处导数为零，可以一步得到全局极值的近似。<br>
+2，GBDT是给定一个当前收敛最快的方向，每次走一步调整一步，需要多个完成。<br>
+基于以上两点XGBoost的收敛速度快于GBDT。<br>
+这也是也是牛顿法收敛速度快于梯度下降的原因</p>
+<p>XGBoost 是由多个回归树boosting而成的结果</p>
+<h1 id="算法说明">1. 算法说明</h1>
+<h2 id="xgboost中决策树的目标函数">1.1. XGBoost中决策树的目标函数</h2>
+<p>决策树算法的目标：损失+正则 <span class="math display">\[Obj(\Theta) = \min \bigg[\ L(\theta) + \Omega(\Theta) \bigg] \tag{1}\]</span></p>
+<p>XGBoost本身是有多棵回归树构成，回归树的不同损失函数决定了XGBoost是用于分类还是回归</p>
+<ul>
+<li>损失函数： 以下描述中<span class="math inline">\(\hat{y}_i\)</span>为预测结果
+<ul>
+<li><p>对于回归问题： <span class="math display">\[L(\theta) = \sum_i (y_i-\hat{y}_i)^2 \tag{2}\]</span></p></li>
+<li>对于二分类问题
+<ul>
+<li>损失函数 <span class="math display">\[L(\theta) = \sum_i \big[ y_i\ln (1+e^{-\hat{y}_i}) + (1-y_i)\ln (1+e^{\hat{y}_i})\big] \tag{3}\]</span></li>
+<li><span class="math inline">\(y_i = 0, 1。\hat{y}_i \in (-\infty，+\infty)\)</span></li>
+<li>预测分类 <span class="math display">\[sigmoid \bigg( \frac{1}{1+e^{-\hat{y}_i}} \bigg)\]</span></li>
+</ul></li>
+<li>多分类
+<ul>
+<li>损失函数<br>
+<span class="math display">\[
+L(\theta) = -\frac{1}{m}\bigg[
+\sum_{i=1}^m \sum_{j=1}^k 1 \{y_i= j\}
+\cdot  \log \frac{e^{\hat{y}_{i\_j}} }{\sum_{l=1}^k  e^{\hat{y}_{i\_l}} }
+\bigg]  \tag{4}
+\]</span>
+<ul>
+<li><span class="math inline">\(m\)</span>：样本个数</li>
+<li><span class="math inline">\(k\)</span>：分类个数</li>
+<li><span class="math inline">\(1 \{y_i= j\}\)</span>：<span class="math inline">\(1 \{值为真的表达式\} = 1\)</span></li>
+<li><span class="math inline">\(\hat{y}_{i\_j}\)</span>：样本<span class="math inline">\(x_i\)</span>在样本第j类上的预测值</li>
+</ul></li>
+<li>预测分类 <span class="math display">\[arg \max_{j} \frac{e^\hat{y}_{i\_j}}{\sum_{l=1}^k e^{\hat{y}_{i\_l}}} \ \ (j = 1, 2, \ldots, k)\]</span></li>
+</ul></li>
+</ul></li>
+<li><p>正则项 <span class="math display">\[\Omega(f) = \gamma T + \frac{1}{2}\lambda \sum_{j=1}^T w_j^2 \tag{5}\]</span></p>
+<ul>
+<li><span class="math inline">\(T\)</span>：叶子节点个数</li>
+<li><span class="math inline">\(w_j\)</span>：叶子节点代表的回归值，例：CART回归树中落在某一叶子节点<span class="math inline">\(y_i\)</span>的平均值</li>
+<li><span class="math inline">\(\gamma\)</span>：超参数，叶子节点个数的惩罚系数</li>
+<li><span class="math inline">\(\lambda\)</span>：超参数，L2-norm平方的系数</li>
+</ul></li>
+</ul>
+<p>考虑boosting算法的一般形式： <span class="math display">\[\begin{split}\hat{y}_i^{(0)} &amp;= 0\\
+\hat{y}_i^{(1)} &amp;= f_1(x_i) = \hat{y}_i^{(0)} + f_1(x_i)\\
+\hat{y}_i^{(2)} &amp;= f_1(x_i) + f_2(x_i)= \hat{y}_i^{(1)} + f_2(x_i)\\
+&amp;\dots\\
+\hat{y}_i^{(t)} &amp;= \sum_{k=1}^t f_k(x_i)= \hat{y}_i^{(t-1)} + f_t(x_i)
+\end{split} \tag{6}\]</span></p>
+<p>则 <span class="math display">\[
+\begin{split}\text{obj}^{(t)} &amp; = \sum_{i=1}^n l(y_i, \hat{y}_i^{(t)}) + \sum_{i=1}^t\Omega(f_i) \\
+          &amp; = \sum_{i=1}^n l(y_i, \hat{y}_i^{(t-1)} + f_t(x_i)) + \Omega(f_t) + constant
+\end{split} \tag{7}
+\]</span></p>
+<h2 id="决策树决策规则">1.2. 决策树决策规则</h2>
+<h3 id="目标函数的二阶近似">1.2.1. 目标函数的二阶近似</h3>
+<blockquote>
+<p>泰勒展式： <span class="math display">\[
+f(x) = f(a) + \frac{f&#39;(a)}{1!}(x-a)+ \frac{f^{2}(a)}{2!}(x-a)^2 + \cdots + \frac{f^{(n)}(a)}{n!}(x-a)^n + R_n(x)
+\]</span></p>
+</blockquote>
+<p><span class="math inline">\(\begin{aligned} 令， &amp;f(x) = l\big(y_i， \hat{y}_i^{(t-1)} + f_t(x_i)\big)，f(a) = l(y_i， \hat{y}_i^{(t-1)}) \\ 则，&amp; x - a = f_t(x_i) \end{aligned}\)</span></p>
+<p>则目标函数的二阶泰勒展开为： <span class="math display">\[
+\text{obj}^{(t)} \approx 
+ \sum_{i=1}^n \big[ l(y_i， \hat{y}_i^{(t-1)}) + g_i \cdot f_t(x_i) + \frac{1}{2} \cdot h_i \cdot f_t^2(x_i)\big] +\sum_{i=1}^t\Omega(f_i) \tag{8}
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+令： &amp; g_i = \frac{\partial l(y_i， \hat{y}_i)}{\partial \hat{y}_i} \ \Bigg|_{\hat{y}_i = \hat{y}_i^{(t-1)}} \\
+&amp; h_i = \frac{\partial ^2 l(y_i， \hat{y}_i)}{\partial \hat{y}_i} \ \Bigg|_{\hat{y}_i = \hat{y}_i^{(t-1)}}
+\end{aligned}
+\tag{9}
+\]</span></p>
+<p>定义好损失函数，前<span class="math inline">\(t-1\)</span>棵树训练好后，<span class="math inline">\(g_i\)</span> 和 <span class="math inline">\(h_i\)</span>就确定了。通过<span class="math inline">\(g_i\)</span> 和 <span class="math inline">\(h_i\)</span>是调整样本权值，用于训练第<span class="math inline">\(t\)</span>棵树，也体现Boosting思想</p>
+<p>考虑到是对<span class="math inline">\(\text{obj}^{(t)}\)</span>求最小值，前<span class="math inline">\(t-1\)</span>棵确定下来后<span class="math inline">\(l(y_i， \hat{y}_i^{(t-1)})\)</span>为定值，另外前<span class="math inline">\(t-1\)</span>棵树的正则项也为常数，即对于目标而言 <span class="math inline">\(\sum_{i=1}^t\Omega(f_i) = constant + \Omega(f_t)\)</span></p>
+<p>所以目标可以表示为： <span class="math display">\[
+\begin{split}
+ \text{obj}^{(t)} 
+&amp; \approx  \sum_{i=1}^n \big[g_i f_t(x_i) + \frac{1}{2} h_i f_t^2(x_i)\big] + \Omega(f_t) \\
+&amp; = \sum_{i=1}^n [g_i f_t(x_i)  + \frac{1}{2} h_i f_t^2(x_i) ] + \gamma T + \frac{1}{2}\lambda \sum_{j=1}^T w_j^2\\
+\end{split} \tag{10}
+\]</span></p>
+<p>其中<span class="math inline">\(f_t(x_i)\)</span>表示样本<span class="math inline">\(x_i\)</span>在第<span class="math inline">\(t\)</span>棵树上的预测结果，假设设n个样本在第<span class="math inline">\(t\)</span>棵树上的预测结果分布在<span class="math inline">\(T\)</span>个叶子节点上，则某一叶子节点<span class="math inline">\(I_j\)</span>上有必相同的回归值<span class="math inline">\(w_j\)</span>，则有 <span class="math display">\[
+\begin{split}
+\sum_{i\in I_j} g_i  f_t(x_i) = (\sum_{i\in I_j} g_i) \cdot w_j \\
+\end{split} \tag{11}
+\]</span></p>
+<p>则： <span class="math display">\[
+\begin{split}
+\text{obj}^{(t)} 
+\approx \sum^T_{j=1} [(\sum_{i\in I_j} g_i) w_j + \frac{1}{2} (\sum_{i\in I_j} h_i + \lambda) w_j^2 ] + \gamma T
+\end{split} \tag{12}
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+令：&amp;G_j = \sum_{i\in I_j} g_i\\
+&amp;H_j = \sum_{i\in I_j} h_i 
+\end{aligned}
+\tag{13}
+\]</span></p>
+<p><span class="math display">\[
+\text{obj}^{(t)} \approx  \sum^T_{j=1} \big[G_jw_j + \frac{1}{2} (H_j+\lambda) w_j^2\big] +\gamma T \tag{14}
+\]</span></p>
+<h3 id="目标函数取得极值时的条件">1.2.2. 目标函数取得极值时的条件</h3>
+<p>当<span class="math inline">\(\text{obj}^{(t)}\)</span>取得极小值时， <span class="math inline">\(\frac{\partial \text{obj}^{(t)}}{\partial w_j} = 0\)</span>，则： <span class="math display">\[
+w_j^\ast = -\frac{G_j}{H_j+\lambda} \tag{15}
+\]</span></p>
+<p><span class="math inline">\(w_j^\ast\)</span>即为第t棵树，落在第j个叶子结点预测值<span class="math inline">\(f_t(x_i)\)</span></p>
+<p>则决策树的损失为： <span class="math display">\[
+\text{obj}^\ast = -\frac{1}{2} \sum_{j=1}^T \frac{G_j^2}{H_j+\lambda} + \gamma T \tag{16}
+\]</span></p>
+<h3 id="决策树建立过程的参考依据">1.2.3. 决策树建立过程的参考依据</h3>
+<p>决策树损失越小越好，类似基尼系数或熵。则决策树某个节点分裂前后的的增益为：父节点点的损失 - 左子树的损失 - 右子树的损失。不分裂：全部样本子一个叶子结点；分裂：左子树（叶）和右子树（叶）都先看成叶子，则<span class="math inline">\(T=1\)</span>，决策树分裂前后的增益为： <span class="math display">\[
+Gain = \frac{1}{2} \left[\frac{G_L^2}{H_L+\lambda}+\frac{G_R^2}{H_R+\lambda}-\frac{(G_L+G_R)^2}{H_L+H_R+\lambda}\right] - \gamma 
+\tag{17}
+\]</span></p>
+<p>决策树建立过程是寻找使得增益<span class="math inline">\(Gain\)</span>最大的特征及特征上的值过程</p>
+<h1 id="xgboost基本思想伪代码">2. XGBoost基本思想伪代码</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">定义损失函数L</div><div class="line"></div><div class="line">初始化预测结果为f_0</div><div class="line"></div><div class="line">求所有样本的一阶、二阶损失</div><div class="line"></div><div class="line"><span class="keyword">for</span> t <span class="keyword">in</span> <span class="number">1</span>，<span class="number">2</span>，..., n：   <span class="comment"># 训练第i棵树</span></div><div class="line">    <span class="number">1</span>，根据式（<span class="number">9</span>）更新样样本的一阶、二阶损失</div><div class="line">    <span class="number">2</span>，根据式（<span class="number">17</span>）建立决策树并存储树的结构及叶子节点的值</div><div class="line"></div><div class="line">    <span class="number">3</span>，按叶子根据式（<span class="number">15</span>）计算每个样本在第t棵树上的预测值 f_t(x_i)</div><div class="line">    <span class="number">4</span>，根据式（<span class="number">6</span>）y_t = y_(t<span class="number">-1</span>) + f_t(x_i)</div><div class="line"></div><div class="line">输出模型</div></pre></td></tr></table></figure>
+<p>具体XGBoost实现参数见：<a href="https://github.com/dmlc/xgboost/blob/master/doc/parameter.md" class="uri" target="_blank" rel="external">https://github.com/dmlc/xgboost/blob/master/doc/parameter.md</a></p>
+<h1 id="参考资料">3. 参考资料</h1>
+<p>[1] XGBoost官网：<a href="https://xgboost.readthedocs.io/en/latest/model.html" class="uri" target="_blank" rel="external">https://xgboost.readthedocs.io/en/latest/model.html</a><br>
+[2] XGboost的GitHub地址：<a href="https://github.com/dmlc/xgboost" class="uri" target="_blank" rel="external">https://github.com/dmlc/xgboost</a><br>
+[3] <a href="http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf" class="uri" target="_blank" rel="external">http://homes.cs.washington.edu/~tqchen/pdf/BoostedTree.pdf</a><br>
+[4] <a href="https://en.wikipedia.org/wiki/Gradient_boosting" class="uri" target="_blank" rel="external">https://en.wikipedia.org/wiki/Gradient_boosting</a> [5] <a href="https://zh.wikipedia.org/wiki/泰勒公式" class="uri" target="_blank" rel="external">https://zh.wikipedia.org/wiki/泰勒公式</a><br>
+[6] <a href="http://ufldl.stanford.edu/wiki/index.php/Softmax回归" class="uri" target="_blank" rel="external">http://ufldl.stanford.edu/wiki/index.php/Softmax回归</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/集成方法/" rel="tag"># 集成方法</a>
+          
+            <a href="/tags/XGBoost/" rel="tag"># XGBoost</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/31/gcForest/" rel="next" title="gcForest">
+                <i class="fa fa-chevron-left"></i> gcForest
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/03/gbdt/" rel="prev" title="Gradient Boosting">
+                Gradient Boosting <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/assets/blogImg/zhanghu798.jpg"
+               alt="张虎" />
+          <p class="site-author-name" itemprop="name">张虎</p>
+          <p class="site-description motion-element" itemprop="description">记录、交流、进步</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.xinyao.pub/" title="李昕垚" target="_blank">李昕垚</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="notes.cribug.com" title="小强" target="_blank">小强</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#算法说明"><span class="nav-text">1. 算法说明</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#xgboost中决策树的目标函数"><span class="nav-text">1.1. XGBoost中决策树的目标函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#决策树决策规则"><span class="nav-text">1.2. 决策树决策规则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#目标函数的二阶近似"><span class="nav-text">1.2.1. 目标函数的二阶近似</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#目标函数取得极值时的条件"><span class="nav-text">1.2.2. 目标函数取得极值时的条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#决策树建立过程的参考依据"><span class="nav-text">1.2.3. 决策树建立过程的参考依据</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#xgboost基本思想伪代码"><span class="nav-text">2. XGBoost基本思想伪代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-text">3. 参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张虎</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'reset-pub';
+      var disqus_identifier = '2017/04/01/xgboost/';
+
+      var disqus_title = "XGBoost";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("rq0juDBslCtl5aXg0AoWw1q5-gzGzoHsz", "Y03tdkiQrnrHBQzsjfjdL29V");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+</body>
+</html>

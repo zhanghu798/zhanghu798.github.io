@@ -130,17 +130,17 @@
   var CONFIG = {
     root: '/',
     scheme: 'Mist',
-    sidebar: {"position":"left","display":"hide"},
+    sidebar: {"position":"left","display":"always"},
     fancybox: true,
     motion: true,
     duoshuo: {
-      userId: '0',
+      userId: 'undefined',
       author: '博主'
     },
     algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
+      applicationID: '49YSP050FE',
+      apiKey: 'dcca29b3b14f21decd6cab3544e195fe',
+      indexName: 'reset.pub',
       hits: {"per_page":10},
       labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
     }
@@ -205,7 +205,7 @@
     </a>
   </div>
     
-      <p class="site-subtitle"></p>
+      <h1 class="site-subtitle" itemprop="description"></h1>
     
 </div>
 
@@ -227,8 +227,6 @@
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
             首页
           </a>
         </li>
@@ -237,17 +235,21 @@
         <li class="menu-item menu-item-categories">
           <a href="/categories" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
             分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+            关于
           </a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
             归档
           </a>
@@ -257,8 +259,6 @@
         <li class="menu-item menu-item-tags">
           <a href="/tags" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
-            
             标签
           </a>
         </li>
@@ -267,17 +267,36 @@
         <li class="menu-item menu-item-commonweal">
           <a href="/404.html" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
-            
             公益404
           </a>
         </li>
       
 
       
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+            搜索
+          </a>
+        </li>
+      
     </ul>
   
 
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input" placeholder="search my blog...">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
   
 </nav>
 
@@ -322,14 +341,14 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
+          <h2 class="post-title" itemprop="name headline">
             
             
               
                 SVM
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -348,18 +367,18 @@
 
             
               <span class="post-meta-divider">|</span>
+            
+
+            
               <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
+                <i class="fa fa-calendar-check-o"></i>
               </span>
-              <span class="post-meta-item-text">更新于</span>
-              <span class="post-updated">
-              <time title="更新于" itemprop="dateCreated dateUpdated" datetime="2017-03-20T23:52:00+08:00">
+              
+                <span class="post-meta-item-text">更新于</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2017-03-26T11:26:37+08:00">
                 2017-03-26
               </time>
-            
-
-            
-
             
           </span>
 
@@ -383,6 +402,17 @@
 
                 
                 
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/SVM/" itemprop="url" rel="index">
+                    <span itemprop="name">SVM</span>
+                  </a>
+                </span>
+
+                
+                
               
             </span>
           
@@ -395,7 +425,7 @@
                   <i class="fa fa-comment-o"></i>
                 </span>
                 <a href="/2017/03/20/svm/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/20/svm/" itemprop="commentCount"></span>
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/20/svm/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -487,7 +517,7 @@ st: &amp; y_i(\boldsymbol{w}^T\boldsymbol{x_i} + b)\geqslant
 \right.
 \]</span></p>
 <p><em>注</em>:<span class="math inline">\(\ \)</span>此时所求<span class="math inline">\(\boldsymbol{w}^T\boldsymbol{x} + b = 0\)</span> 为原始假设超平面的等价超平面</p>
-<p>问题目标： 找到满足上是约束的分离超平面参数$  $, <span class="math inline">\(b^*\)</span>，求的分离超平面为<span class="math inline">\(\boldsymbol{w^*} \cdot \boldsymbol{x} + b^* = 0\)</span>, 对于待预测样本<span class="math inline">\(\boldsymbol{x_i}\)</span>分类决策函数为：<span class="math display">\[f(x) = sign(\boldsymbol{w^*} \cdot \boldsymbol{x_i} + b)\]</span></p>
+<p>问题目标： 找到满足上是约束的分离超平面参数<span class="math inline">\(\boldsymbol{w^*}\)</span>, <span class="math inline">\(b^*\)</span>，求的分离超平面为<span class="math inline">\(\boldsymbol{w^*} \cdot \boldsymbol{x} + b^* = 0\)</span>, 对于待预测样本<span class="math inline">\(\boldsymbol{x_i}\)</span>分类决策函数为：<span class="math display">\[f(x) = sign(\boldsymbol{w^*} \cdot \boldsymbol{x_i} + b)\]</span></p>
 <h2 id="求解">1.3. 求解</h2>
 <p>根据<a href="http://reset.pub/2017/03/18/convex-optimization" target="_blank" rel="external">凸优化简介</a>，原问题可以写作： <span class="math display">\[\left\{
 \begin{aligned}
@@ -522,7 +552,7 @@ st: &amp; 1 - y_i(\boldsymbol{w}^T\boldsymbol{x_i} + b)\leqslant
 <p>说明：(1)，(2)式中，参数<span class="math inline">\(\boldsymbol{w}, b\)</span>对应<a href="http://reset.pub/2017/03/18/convex-optimization/" target="_blank" rel="external">凸优化简介</a>中KKT条件的<span class="math inline">\(\boldsymbol{x}\)</span>， 是待求参数。<span class="math inline">\(y_i(\boldsymbol{w}^T\boldsymbol{x_i} + b)\geqslant  1，\ i\in[1， m]\)</span> 约束中的<span class="math inline">\(\boldsymbol{x_i}\)</span>和<span class="math inline">\(y_i\)</span>为一个样本及其对应的类别，为已知常数</p>
 <h3 id="min_boldsymbolw-b-lboldsymbolw-b-boldsymbolalpha的求解">1.3.4. \(\min_{\boldsymbol{w}, b} L(\boldsymbol{w}, b, \boldsymbol{\alpha})\)的求解</h3>
 <p>由KKT条件(1)可得： <span class="math display">\[\boldsymbol{w^*} - \sum_{i=1}^m \alpha_i y_i \boldsymbol{x_i} = \boldsymbol{0} \Longrightarrow \boldsymbol{w^*} = \sum_{i=1}^m \alpha_i y_i \boldsymbol{x_i} \ \ \ \ (6)\]</span></p>
-<p>由KKT条件(2)可得： <span class="math display">\[ \sum_{i=1}^m \alpha_i y_i  = 0 \ \ \ \ (7)\]</span></p>
+<p>由KKT条件(2)可得： <span class="math display">\[\sum_{i=1}^m \alpha_i y_i  = 0 \ \ \ \ (7)\]</span></p>
 <p>由KKT条件(3)，(4)，(5)联立可得：</p>
 <ul>
 <li><p>当<span class="math inline">\(a_i^* &gt; 0\)</span>时，其对应不等式约束为为边界条件，对应样本点为支持向量，有： <span class="math display">\[\begin{aligned}
@@ -616,7 +646,7 @@ st: \ &amp; y_i(\boldsymbol{w}^T\boldsymbol{x_i} + b)\geqslant 1 - \xi_i, &amp; 
 \end{aligned}
 \]</span></p>
 <p>用SMO求得<span class="math inline">\(\boldsymbol{\alpha}\)</span>，对于 <span class="math inline">\(0 &lt; a_i &lt; C\)</span> 的样本点： 假设满足<span class="math inline">\(0 &lt; a_i &lt; C\)</span>的个数为n<br>
-<span class="math display">\[ b^j = y_j - \sum_{i=i}^m \alpha_i ^ * y_i(\boldsymbol{x_i} \cdot \boldsymbol{x_j})，j \in [1, n]\]</span> 实际求解过程中<span class="math display">\[b^*=\frac{1}{n} \sum_{j=1}^n b^j\]</span></p>
+<span class="math display">\[b^j = y_j - \sum_{i=i}^m \alpha_i ^ * y_i(\boldsymbol{x_i} \cdot \boldsymbol{x_j})，j \in [1, n]\]</span> 实际求解过程中<span class="math display">\[b^*=\frac{1}{n} \sum_{j=1}^n b^j\]</span></p>
 <p>分离超平面为： <span class="math display">\[\sum_{i=1}^m a_i^* y_i(\boldsymbol{x} \cdot \boldsymbol{x_i}) + b^* = 0， (其中(\boldsymbol{x_i}, y_i)为训练样本及对应标签)\]</span></p>
 <p>分类决策函数为： <span class="math display">\[f(x) = sign \big[\sum_{i=1}^m a_i^* y_i(\boldsymbol{x_i} \cdot \boldsymbol{x}) + b^* \big] \ \ \ (\boldsymbol{x} 为待预测样本)\]</span></p>
 <p>超参数<span class="math inline">\(C\)</span>为正则化常数，<span class="math inline">\(C\)</span>越大， 分离超平面和支持超平面越距离越近, 训练集的准确率越高, 模型泛化能里越弱 当惩罚系数<span class="math inline">\(C \to +\infty\)</span> 时，退化为线性可分的情况</p>
@@ -653,7 +683,7 @@ st: \ &amp; y_i(\boldsymbol{w}^T\boldsymbol{x_i} + b)\geqslant 1 - \xi_i, &amp; 
 \end{aligned}
 \]</span></p>
 <p>求得<span class="math inline">\(a_i^*\)</span>后<br>
-<span class="math display">\[ b^* = \frac{1}{n} \sum_{j=1}^n \big[y_j - \sum_{i=i}^m \alpha_i ^ * y_i \kappa(\boldsymbol{x_i}, \boldsymbol{x_j}) \big]， 0 &lt; a_j &lt; C\]</span></p>
+<span class="math display">\[b^* = \frac{1}{n} \sum_{j=1}^n \big[y_j - \sum_{i=i}^m \alpha_i ^ * y_i \kappa(\boldsymbol{x_i}, \boldsymbol{x_j}) \big]， 0 &lt; a_j &lt; C\]</span></p>
 <p>分离超平面为：<br>
 <span class="math display">\[\sum_{i=1}^m a_i^* y_i \kappa(\boldsymbol{x_i}, \boldsymbol{x_j}) + b^* = 0， (其中(\boldsymbol{x_i}, y_i）为训练样本及对应标签)\]</span></p>
 <p>分类决策函数为：<br>
@@ -671,7 +701,9 @@ st: \ &amp; y_i(\boldsymbol{w}^T\boldsymbol{x_i} + b)\geqslant 1 - \xi_i, &amp; 
 <li><p>更多核函数见<a href="https://my.oschina.net/lfxu/blog/478928" target="_blank" rel="external">机器学习核函数手册</a></p></li>
 </ul>
 <h1 id="smo">3. SMO</h1>
-<p>(待续…)</p>
+<p>Sequential minimal optimization</p>
+<p>序列最小优化算法，<a href="https://en.wikipedia.org/wiki/Sequential_minimal_optimization" class="uri" target="_blank" rel="external">https://en.wikipedia.org/wiki/Sequential_minimal_optimization</a></p>
+<p>详见《统计学习方法》，李航著，<span class="math inline">\(P_{124}\)</span></p>
 <h1 id="损失函数">4. 损失函数</h1>
 <p>考虑约束问题式(2.1)，将不等式约束部分和约束整合，可以得到线性支持向量机的损失为hinge损失，形式如下： <span class="math display">\[\sum_{i=1}^m \max \left\{ 0, 1 - (\boldsymbol{w}^T x_i + b) y_i \right\}\]</span></p>
 <blockquote>
@@ -717,7 +749,7 @@ st: \ &amp; y_i(\boldsymbol{w}^T\boldsymbol{x_i} + b)\geqslant 1 - \xi_i, &amp; 
 </blockquote>
 <img src="/pic/ml/down/hinge.png" border="0" width="50%" height="50%" style="margin: 0 auto">
 <center>
-（<a href="http://breezedeus.github.io/2015/07/12/breezedeus-svm-is-hingeloss-with-l2regularization.html" target="_blank" rel="external">图3</a>, 合叶, hinge损失亦被称为合叶损失)
+（<a href="http://breezedeus.github.io/2015/07/12/breezedeus-svm-is-hingeloss-with-l2regularization.html" target="_blank" rel="external">图3</a>, 合页, hinge损失亦被称为合页损失)
 </center>
 <h1 id="svm与感知机异同">5. SVM与感知机异同</h1>
 <p>感知机是误分类点算法驱动的, 其损失函数: <span class="math display">\[\sum_{i=1}^m \max \left\{ 0,  - (\boldsymbol{w}^T \boldsymbol{x_i} + b) y_i \right\}\]</span></p>
@@ -866,8 +898,11 @@ SVC:<br>
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/03/20/svm/"
-           data-title="SVM" data-url="http://yoursite.com/2017/03/20/svm/">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
       </div>
     
   </div>
@@ -914,7 +949,7 @@ SVC:<br>
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -923,7 +958,7 @@ SVC:<br>
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -932,7 +967,7 @@ SVC:<br>
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -954,12 +989,16 @@ SVC:<br>
           <div class="links-of-blogroll motion-element links-of-blogroll-inline">
             <div class="links-of-blogroll-title">
               <i class="fa  fa-fw fa-globe"></i>
-              链接
+              友情链接
             </div>
             <ul class="links-of-blogroll-list">
               
                 <li class="links-of-blogroll-item">
                   <a href="http://www.xinyao.pub/" title="李昕垚" target="_blank">李昕垚</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="notes.cribug.com" title="小强" target="_blank">小强</a>
                 </li>
               
             </ul>
@@ -1002,7 +1041,7 @@ SVC:<br>
         <div class="copyright" >
   
   &copy;  2016 - 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1100,44 +1139,174 @@ SVC:<br>
 
   
 
-  
-    
+
+
   
 
+    <script type="text/javascript">
+      var disqus_shortname = 'reset-pub';
+      var disqus_identifier = '2017/03/20/svm/';
+
+      var disqus_title = "SVM";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
   <script type="text/javascript">
-    var duoshuoQuery = {short_name:"reset"};
-    (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
   </script>
 
-  
-    
-    
-    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
-    <script src="/js/src/hook-duoshuo.js"></script>
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
 
   
   
@@ -1273,6 +1442,21 @@ SVC:<br>
 
 
   
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
 
   
 

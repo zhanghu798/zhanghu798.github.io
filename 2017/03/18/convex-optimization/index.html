@@ -97,7 +97,7 @@ SVM中的凸优化中的KKT">
 SVM中的凸优化中的KKT">
 <meta property="og:image" content="http://yoursite.com/pic/ml/down/LagrangeMultipliers2D.svg.png">
 <meta property="og:image" content="http://yoursite.com/pic/ml/down/600px-As_wiki_lgm_parab.svg.png">
-<meta property="og:updated_time" content="2017-03-26T03:18:30.000Z">
+<meta property="og:updated_time" content="2017-05-14T16:34:20.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="凸优化简介">
 <meta name="twitter:description" content="Convex Optimization，凸优化
@@ -111,17 +111,17 @@ SVM中的凸优化中的KKT">
   var CONFIG = {
     root: '/',
     scheme: 'Mist',
-    sidebar: {"position":"left","display":"hide"},
+    sidebar: {"position":"left","display":"always"},
     fancybox: true,
     motion: true,
     duoshuo: {
-      userId: '0',
+      userId: 'undefined',
       author: '博主'
     },
     algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
+      applicationID: '49YSP050FE',
+      apiKey: 'dcca29b3b14f21decd6cab3544e195fe',
+      indexName: 'reset.pub',
       hits: {"per_page":10},
       labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
     }
@@ -186,7 +186,7 @@ SVM中的凸优化中的KKT">
     </a>
   </div>
     
-      <p class="site-subtitle"></p>
+      <h1 class="site-subtitle" itemprop="description"></h1>
     
 </div>
 
@@ -208,8 +208,6 @@ SVM中的凸优化中的KKT">
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
             首页
           </a>
         </li>
@@ -218,17 +216,21 @@ SVM中的凸优化中的KKT">
         <li class="menu-item menu-item-categories">
           <a href="/categories" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
             分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+            关于
           </a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
             归档
           </a>
@@ -238,8 +240,6 @@ SVM中的凸优化中的KKT">
         <li class="menu-item menu-item-tags">
           <a href="/tags" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
-            
             标签
           </a>
         </li>
@@ -248,17 +248,36 @@ SVM中的凸优化中的KKT">
         <li class="menu-item menu-item-commonweal">
           <a href="/404.html" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
-            
             公益404
           </a>
         </li>
       
 
       
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+            搜索
+          </a>
+        </li>
+      
     </ul>
   
 
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input" placeholder="search my blog...">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
   
 </nav>
 
@@ -303,14 +322,14 @@ SVM中的凸优化中的KKT">
 
         
         
-          <h1 class="post-title" itemprop="name headline">
+          <h2 class="post-title" itemprop="name headline">
             
             
               
                 凸优化简介
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -329,18 +348,18 @@ SVM中的凸优化中的KKT">
 
             
               <span class="post-meta-divider">|</span>
+            
+
+            
               <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
+                <i class="fa fa-calendar-check-o"></i>
               </span>
-              <span class="post-meta-item-text">更新于</span>
-              <span class="post-updated">
-              <time title="更新于" itemprop="dateCreated dateUpdated" datetime="2017-03-18T15:56:00+08:00">
-                2017-03-26
+              
+                <span class="post-meta-item-text">更新于</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2017-05-15T00:34:20+08:00">
+                2017-05-15
               </time>
-            
-
-            
-
             
           </span>
 
@@ -364,6 +383,17 @@ SVM中的凸优化中的KKT">
 
                 
                 
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/参数优化/" itemprop="url" rel="index">
+                    <span itemprop="name">参数优化</span>
+                  </a>
+                </span>
+
+                
+                
               
             </span>
           
@@ -376,7 +406,7 @@ SVM中的凸优化中的KKT">
                   <i class="fa fa-comment-o"></i>
                 </span>
                 <a href="/2017/03/18/convex-optimization/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/18/convex-optimization/" itemprop="commentCount"></span>
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/18/convex-optimization/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -561,7 +591,7 @@ st\ :&amp;\ \ f_i(x) \leqslant 0\ , \ i = 1,2, \ldots, m &amp;\\
 <li>等高线: 考虑三维情况, <span class="math inline">\(z=f_0(x, y)\)</span>的情况，等高面<span class="math inline">\(z = d\)</span>与函数<span class="math inline">\(f_0(x, y)\)</span>相交的部分为等高线, 等高线在<span class="math inline">\((x, y)\)</span>平面的投影可表示为<span class="math inline">\(f_0(x, y)=d\)</span></li>
 </ul>
 <h3 id="一个等式的约束问题">3.3.1. 一个等式的约束问题</h3>
-<p>如图假设等式约束为 $ h_1(x, y)=g(x, y) - c=0 $， 拉格朗日函数表示为: <span class="math inline">\(L=f_0(x, y) + \nu h_1(x, y)\)</span>. 如果函数<span class="math inline">\(f_0(x, y)\)</span> 的值域连续, 则其等高线投影与$g(x, y) -c <span class="math inline">\(相切处取得等式约束条件下的极值，此时\)</span>f_0(x, y)$</p>
+<p>如图假设等式约束为 <span class="math inline">\(h_1(x, y)=g(x, y) - c=0\)</span>， 拉格朗日函数表示为: <span class="math inline">\(L=f_0(x, y) + \nu h_1(x, y)\)</span>. 如果函数<span class="math inline">\(f_0(x, y)\)</span> 的值域连续, 则其等高线投影与<span class="math inline">\(g(x, y) -c\)</span>相切处取得等式约束条件下的极值，此时<span class="math inline">\(f_0(x, y)\)</span></p>
 <p><span class="math display">\[\left.
 \begin{aligned}
     &amp; \left.
@@ -648,7 +678,7 @@ st\ :&amp;\ \ f_i(x) \leqslant 0\ , \ i = 1,2, \ldots, m &amp;\\
 \end{aligned}
 \right\} \Longrightarrow 该问题的强对偶性可以达到
 \]</span></p>
-<p>证明见:《凸优化》－ 清华出版社 Stephen Boyd 等著， 王书宁等译，<span class="math inline">\(P_{226} - P_{228}\)</span></p>
+<p>证明见:《凸优化》－ 清华出版社 Stephen Boyd 等著， 王书宁等译，<span class="math inline">\(P_{226} - P_{228}\)</span></p>
 <h2 id="kkt条件">3.8. KKT条件</h2>
 <p>强对偶成立时，最优解需要满足的条件</p>
 <p>令<span class="math inline">\(x^*\)</span>是原问题的最优解，<span class="math inline">\((\lambda^*， \nu^*)\)</span>对偶问题的最优解 则， <span class="math display">\[
@@ -775,8 +805,11 @@ h_i(x) = 0， i = 1,2, \ldots, p \ \ \ \ &amp;  \\
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/03/18/convex-optimization/"
-           data-title="凸优化简介" data-url="http://yoursite.com/2017/03/18/convex-optimization/">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
       </div>
     
   </div>
@@ -823,7 +856,7 @@ h_i(x) = 0， i = 1,2, \ldots, p \ \ \ \ &amp;  \\
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -832,7 +865,7 @@ h_i(x) = 0， i = 1,2, \ldots, p \ \ \ \ &amp;  \\
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -841,7 +874,7 @@ h_i(x) = 0， i = 1,2, \ldots, p \ \ \ \ &amp;  \\
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -863,12 +896,16 @@ h_i(x) = 0， i = 1,2, \ldots, p \ \ \ \ &amp;  \\
           <div class="links-of-blogroll motion-element links-of-blogroll-inline">
             <div class="links-of-blogroll-title">
               <i class="fa  fa-fw fa-globe"></i>
-              链接
+              友情链接
             </div>
             <ul class="links-of-blogroll-list">
               
                 <li class="links-of-blogroll-item">
                   <a href="http://www.xinyao.pub/" title="李昕垚" target="_blank">李昕垚</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="notes.cribug.com" title="小强" target="_blank">小强</a>
                 </li>
               
             </ul>
@@ -911,7 +948,7 @@ h_i(x) = 0， i = 1,2, \ldots, p \ \ \ \ &amp;  \\
         <div class="copyright" >
   
   &copy;  2016 - 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1009,44 +1046,174 @@ h_i(x) = 0， i = 1,2, \ldots, p \ \ \ \ &amp;  \\
 
   
 
-  
-    
+
+
   
 
+    <script type="text/javascript">
+      var disqus_shortname = 'reset-pub';
+      var disqus_identifier = '2017/03/18/convex-optimization/';
+
+      var disqus_title = "凸优化简介";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
   <script type="text/javascript">
-    var duoshuoQuery = {short_name:"reset"};
-    (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
   </script>
 
-  
-    
-    
-    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
-    <script src="/js/src/hook-duoshuo.js"></script>
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
 
   
   
@@ -1182,6 +1349,21 @@ h_i(x) = 0， i = 1,2, \ldots, p \ \ \ \ &amp;  \\
 
 
   
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
 
   
 
