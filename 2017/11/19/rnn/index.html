@@ -126,7 +126,7 @@ CNN的出现引入了“感受野”的同时共享参数的机制大大减少DN
 <meta property="og:image" content="http://yoursite.com/pic/ml/rnn/attention_5.jpeg">
 <meta property="og:image" content="http://yoursite.com/pic/ml/rnn/attention_6.jpeg">
 <meta property="og:image" content="http://yoursite.com/pic/ml/rnn/feed-intput.jpg">
-<meta property="og:updated_time" content="2018-08-22T14:09:37.758Z">
+<meta property="og:updated_time" content="2018-08-22T14:16:26.283Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="循环神经网络">
 <meta name="twitter:description" content="Recurrent Neural Network
@@ -392,7 +392,7 @@ CNN的出现引入了“感受野”的同时共享参数的机制大大减少DN
               
                 <span class="post-meta-item-text">更新于</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-08-22T22:09:37+08:00">
+              <time title="更新于" itemprop="dateModified" datetime="2018-08-22T22:16:26+08:00">
                 2018-08-22
               </time>
             
@@ -633,9 +633,9 @@ CNN的出现引入了“感受野”的同时共享参数的机制大大减少DN
 &amp; \widetilde{C}_t = \text{tanh}\big(W_C \cdot  [h_{t-1}, x_t] + b_c\big) &amp;  &amp; 新的记忆 ，决定增强的记忆  \\
 &amp;C_t = f_t \odot C_{t-1} + i_t \odot \widetilde{C}_t   &amp; &amp; 更新记忆：t-1时刻状态 \times 选择保留系数 + 新记忆 \times 新记忆系数\\  
 &amp; o_t = \sigma \big(W_O[h_{t-1}, x_t] + b_O\big)  &amp; &amp; 上一时刻的隐层状态和本次输入决定本次输出\\
-&amp; h_t= o_t \cdot \text{tanh} \big(C_t\big) &amp; &amp; 前一时刻输出和当前网络状态决定当前隐层状态  \\
+&amp; h_t= o_t \cdot \text{tanh} \big(C_t\big) &amp; &amp; 前一时刻输出和当前网络状态决定当前t时刻隐层状态  \\
 \end{aligned}
-\right. \tag{7}
+\right. 
 \]</span></p>
 <h2 id="gru">2.2. GRU</h2>
 <p>2014</p>
