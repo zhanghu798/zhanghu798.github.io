@@ -506,7 +506,7 @@ h_m(x) = \sum_{j=1}^{J_m} b_{jm} I (x \in R_{jm}) \tag{6}
 <p>如果将<span class="math inline">\(h_m(x)\)</span>看成梯度提升中拟合的伪残差<span class="math inline">\(r_{mi}\)</span>， 则梯度提升树可以表示为： <span class="math display">\[
 F_m(x) = F_{m-1}(x) + \gamma_m h_m(x)
 \]</span> 将<span class="math inline">\(h_m(x)\)</span>带入上式得： <span class="math display">\[
-\gamma_m = \mathop{\arg\min}\limits_{\gamma} \sum_{i = 1}^n L(y_i, F_{m-1(x_i) + \gamma h_m(x_i)})
+\gamma_m = \mathop{\arg\min}\limits_{\gamma} \sum_{i = 1}^n L(y_i, F_{m-1(x_i)} + \gamma h_m(x_i))
 \]</span></p>
 <p><span class="math display">\[
 F_m(x) = F_{m-1}(x) + \gamma_m \sum_{j=1}^{J_m} b_{jm} I (x \in R_{jm}) 
