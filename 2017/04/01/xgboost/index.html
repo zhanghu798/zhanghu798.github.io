@@ -579,7 +579,7 @@ f(x) = f(a) + \frac{f&#39;(a)}{1!}(x-a)+ \frac{f^{2}(a)}{2!}(x-a)^2 + \cdots + \
 w_j^\ast = -\frac{G_j}{H_j+\lambda} \tag{15}
 \]</span></p>
 <p><span class="math inline">\(w_j^\ast\)</span>即为第t棵树，落在第j个叶子结点预测值<span class="math inline">\(f_t(x_i)\)</span></p>
-<p>将<span class="math inline">\(w_j^\ast\)</span>带入14式，忽略前<span class="math inline">\(t-1\)</span>课树的结果<span class="math inline">\(\sum_{i=1}^n l(y_i， \hat{y}_i^{(t-1)})\)</span>，则得到决策树的损失为： <span class="math display">\[
+<p>将<span class="math inline">\(w_j^\ast\)</span>带入14式，忽略常数项，即前<span class="math inline">\(t-1\)</span>课树的结果<span class="math inline">\(\sum_{i=1}^n l(y_i， \hat{y}_i^{(t-1)})\)</span>，则得到决策树的损失为： <span class="math display">\[
 \text{obj}^\ast = -\frac{1}{2} \sum_{j=1}^T \frac{G_j^2}{H_j+\lambda} + \gamma T \tag{16}
 \]</span></p>
 <h3 id="决策树建立过程的参考依据">1.2.3. 决策树建立过程的参考依据</h3>
